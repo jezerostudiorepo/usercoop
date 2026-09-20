@@ -95,16 +95,21 @@ USERCOOP may know and manage:
 
 The user can state facts, retrieve knowledge, define concepts, establish rules, and create procedures through the same deterministic language used to operate the system. Programming USERCOOP means teaching it durable vocabulary and behavior, not crossing into a separate conventional programming environment.
 
-An immediate instruction, a reusable definition, a query, and a rule for future action all operate on the same semantic world:
+An immediate instruction, a reusable definition, a query, and a rule for future action all operate on the same semantic world. They need not compress their whole interaction into one line. Context can be established first and then receive the kind of expression it expects:
 
 ```text
-ALICE WORKS ON ORION
-SHOW PEOPLE WORKING ON ORION
-AN ACTIVE PROJECT IS A PROJECT WITH NO COMPLETION DATE
-WHEN A PROJECT IS COMPLETED ARCHIVE ITS WORKING FILES
+ASSERT FACTS
+ALICE WORK ON ORION
+DONE
+
+SHOW WHO WORK ON ORION
+DEFINE ACTIVE PROJECT AS PROJECT WITHOUT COMPLETION DATE
+WHEN PROJECT COMPLETED ARCHIVE WORKING FILES
 ```
 
-USERCOOP distinguishes knowledge explicitly stated by the user, observed from the device, derived through rules, and produced by actions. A derivation follows inspectable deterministic rules. Ambiguity, contradiction, and failure become information items rather than occasions for the system to guess.
+`ASSERT FACTS` is an imperative instruction that enters a declarative context. Within that context, `ALICE WORK ON ORION` can only be a fact offered for assertion. `DONE` leaves that context after the single fact. The remaining lines are articulated requests whose leading forms establish what USERCOOP is to do, while their complements may contain smaller grammatical constructs such as `WHO WORK ON ORION`.
+
+USERCOOP distinguishes knowledge explicitly stated by the user, observed from the device, derived through rules, and produced by actions. A derivation follows inspectable deterministic rules. Ambiguity, contradiction, and failure become information items rather than occasions for the system to guess. When more than one valid reading remains, USERCOOP exposes the alternatives and asks the user to resolve them.
 
 Something may remain known without currently being shown. The relationship is:
 
@@ -214,7 +219,7 @@ The result is neither a conventional graphical desktop nor a conventional termin
 
 ## 5. Design principles
 
-1. **Never guess.** An instruction resolves deterministically or fails without being replaced by a guessed interpretation. Failure generates a semantic event associated with the originating input line.
+1. **Never guess.** An instruction resolves deterministically, exposes its remaining ambiguity for the user to resolve, or fails when it has no valid reading. USERCOOP never silently chooses a merely plausible interpretation. Failure generates a semantic event associated with the originating input line.
 2. **Reveal the current language.** The system shows what is valid in the present context instead of requiring memorization of a global command set.
 3. **React before submission.** A partial instruction may already resolve objects, narrow possibilities, and reorganize the display.
 4. **Preserve authorship spatially.** User-authored and system-generated information items receive visibly distinct presentations, so their origin is apparent without classifying their content.
@@ -383,6 +388,10 @@ The user enters an activity, performs the work appropriate to it, and leaves whe
 
 This is not equivalent to opening and closing an application window. An activity may draw on several knowledge domains and device capabilities while remaining one coherent cognitive context.
 
+Activities may also establish the grammatical role of the next input. An imperative instruction can enter a declarative, imperative, or interrogative context before the content itself is given. For example, after `ASSERT FACTS`, a bare proposition is known to be material for assertion rather than a question or an immediate command. The context remains active for another proposition until the user completes or leaves it.
+
+This stepwise construction is deliberate. USERCOOP asks for one kind of thing at a time and remembers the commitments already made, instead of requiring the user to repeat them through flags, punctuation, or a large all-purpose syntax.
+
 ## 9. Command language
 
 The primary interaction is keyboard-driven through an active typing space. The vocabulary is terse and mechanical, taking inspiration from the archetypal keyboard scenes in *Tron* (1982) and *WarGames* (1983).
@@ -391,12 +400,25 @@ SHRDLU is a spiritual ancestor rather than a syntax to copy. Its natural-languag
 
 REXX contributes the principle of least astonishment: the meaning of an instruction should follow from its visible words, without hidden precedence surprises or punctuation doing silent work.
 
-### 9.1 Deterministic interpretation
+### 9.1 Modes, context, and deterministic interpretation
+
+USERCOOP's language uses declarative, imperative, and interrogative modes. Mode is established by the active activity, by the leading form of the current instruction, or by both together.
+
+- A declarative expression offers a proposition within a context that is ready to receive one.
+- An imperative expression asks USERCOOP to act or establishes a more specific activity, such as `ASSERT FACTS`.
+- An interrogative expression describes knowledge to retrieve, either independently in a questioning context or as a construct inside an imperative such as `SHOW WHO WORK ON ORION`.
+
+Context does not replace grammar. It narrows the role of the line; grammar articulates the request within that role. A verb may take a simple complement such as a word or number, or a modular construct such as `HELD BLOCK` or `WHO WORK ON ORION`. Constructs can fill slots inside larger patterns, allowing expressive instructions to grow from small understandable parts.
+
+USERCOOP does not seek to imitate unrestricted prose. Its vocabulary is terse, its predicates may use stable uninflected forms, and punctuation is not part of its grammar. Word order, reserved forms, semantic types, and the current context carry the structure.
 
 - A command that resolves cleanly is accepted.
-- A submitted command that does not resolve cleanly does not execute and generates a failure event associated with its input line.
+- A submitted command with no valid reading does not execute and generates a failure event associated with its input line.
+- A submitted command with several valid readings does not execute yet. USERCOOP enters a clarification activity, presents the alternatives in the terms that distinguish them, and accepts a selection or further expression from the user.
 - Fuzzy matching never silently substitutes a plausible interpretation.
 - Every intermediate reduction follows an ordered, inspectable pattern list.
+
+Clarification is a normal continuation of the activity, not an admission that natural-language guessing has taken place. The ambiguity itself is known precisely. If the user abandons clarification, no reading is committed.
 
 ### 9.2 Patterns and composition
 
@@ -1246,7 +1268,7 @@ The distinctive claims of this design are testable, and the ones that are not te
 
 | Claim | How it is tested |
 |---|---|
-| Never guess | Property tests over generated inputs: every input either resolves to exactly one reading or produces a failure event. No input produces a second-choice interpretation. |
+| Never guess | Property tests over generated inputs: every input resolves to one reading, enters clarification with every remaining valid reading exposed, or produces a failure event when no reading exists. No input silently commits a second-choice interpretation. |
 | Offline by construction | Build-time static analysis plus the runtime observation test of section 6.3. |
 | Deterministic parsing | Golden tests over a pattern corpus, including precedence cases and reserved-word collisions. |
 | Frame rate cannot change results | The same inference run at different operation budgets and frame rates produces identical derivations in the same order. |
