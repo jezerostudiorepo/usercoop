@@ -204,13 +204,25 @@ A rule cannot escape the capability boundary merely because its conclusion recom
 
 The device is where USERCOOP runs, one of the worlds it knows about, and an environment in which it can act. Files, folders, applications, processes, settings, notifications, hardware state, typed entries, and operation results can all become objects, facts, events, or actions within the knowledge base.
 
-Device management is therefore an expert domain of USERCOOP rather than a collection of unrelated utilities. Device facts participate in queries, rules, and procedures just like user-defined knowledge:
+Device management is therefore an expert domain of USERCOOP rather than a collection of unrelated utilities. Device facts participate in requests, deductions, and productions just like user-defined knowledge. Using the same illustrative grammar as section 2.1, an exchange might look like this:
 
-```text
-REPORT.PDF IS IN PROJECT ORION
-EDITOR IS RUNNING
-BATTERY LEVEL IS 18 PERCENT
-WHEN BACKUP IS CONNECTED SHOW UNARCHIVED PROJECTS
+```
+usr:    NEW ENTRY
+        CATEGORY DEVICE
+        FACTS
+        REPORT.PDF IS IN PROJECT ORION
+        EDITOR IS RUNNING
+        BATTERY LEVEL IS 18 PERCENT
+
+sys:    3 FACTS SAVED
+
+usr:    NEW ENTRY
+        CATEGORY DEVICE
+        PRODUCTIONS
+        WHEN BACKUP IS CONNECTED
+        THEN SHOW UNARCHIVED PROJECTS
+
+sys:    1 PRODUCTION SAVED
 ```
 
 Applications may be found, launched, focused, or stopped as objects and capabilities of the device. They are not the semantic foundation of USERCOOP and do not replace its knowledge model with their own interaction systems.
@@ -472,7 +484,7 @@ The unit of submission is an entry, not a physical line. USERCOOP treats the ent
 
 The grammar currently in force determines how the lines of an entry relate, what may be omitted or inferred from context, and what each construct means. The examples above intentionally leave those definitions unstated: they demonstrate pace and character rather than standardizing their syntax.
 
-The supplied grammar can use word position rather than punctuation to mark argument roles:
+One possible grammar can use word position rather than punctuation to mark argument roles:
 
 ```text
 PUT x INTO y
@@ -480,12 +492,12 @@ x TALLER THAN y
 HELD x
 ```
 
-Patterns are organized as an ordered list that explicitly defines their precedence, and they reduce from the highest precedence outward.
+In this example, patterns are organized as an ordered list that explicitly defines their precedence, and they reduce from the highest precedence outward.
 
 Worked example:
 
-```text
-PUT BLOCK TALLER THAN HELD BLOCK INTO BOX
+```
+usr:    PUT BLOCK TALLER THAN HELD BLOCK INTO BOX
 ```
 
 1. `HELD BLOCK` matches `HELD x` and resolves to one held block, `OBJ1`.
@@ -548,10 +560,10 @@ The first implementation provides a Latin-script command vocabulary. Unicode tex
 
 Resolved portions of an unfinished entry already affect the surrounding display.
 
-Within one line of an entry, while composing:
+Within one line of an entry using that example grammar, while composing:
 
-```text
-PUT BLOCK TALLER THAN HELD BLOCK INTO BOX
+```
+usr:    PUT BLOCK TALLER THAN HELD BLOCK INTO BOX
 ```
 
 the interface may progress as follows:
