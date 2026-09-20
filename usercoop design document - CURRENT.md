@@ -1,10 +1,13 @@
-# USERCOOP Interaction System
+# USERCOOP Design Document
 
 ## Contents
 
 - [Purpose](#purpose)
 - [A personal programmable expert system](#a-personal-programmable-expert-system)
   - [Knowledge and programming](#knowledge-and-programming)
+  - [Teaching and use](#teaching-and-use)
+  - [Subjective upper ontology](#subjective-upper-ontology)
+  - [Initiative and bounded autonomy](#initiative-and-bounded-autonomy)
   - [The device as a known world](#the-device-as-a-known-world)
   - [The session as point of contact](#the-session-as-point-of-contact)
   - [Cooperation in lived time](#cooperation-in-lived-time)
@@ -77,6 +80,8 @@
 - [Implementation](#implementation)
   - [Initial application structure](#initial-application-structure)
   - [Semantic data is not the scene tree](#semantic-data-is-not-the-scene-tree)
+  - [Knowledge language](#knowledge-language)
+  - [Reasoning capabilities](#reasoning-capabilities)
   - [Incremental inference](#incremental-inference)
   - [Persistence](#persistence)
   - [Initial implementation direction](#initial-implementation-direction)
@@ -139,6 +144,37 @@ information item
 space
 ```
 
+### Teaching and use
+
+Teaching USERCOOP and using USERCOOP are the same ongoing activity. The user does not first prepare an expert system and later consult it. Facts, vocabulary, rules, procedures, corrections, and questions accumulate while the system is already being used.
+
+A new installation begins as an expert system primarily about itself: what it is, what it intends, what it can do, how it reasons, and which parts of itself the user may change. It becomes personal through continued interaction.
+
+The system must support sophisticated knowledge when the user supplies it. A personal scope does not imply simple subject matter or shallow inference.
+
+### Subjective upper ontology
+
+USERCOOP's upper ontology begins with the system doing the inference. It understands itself as a program situated on a device, acting through explicit capabilities, during a session shared with its user.
+
+This is subjective in the sense of viewpoint, not emotion. Identity, intention, observation, action, permission, time, and explanation are organized around what USERCOOP is and how it participates in the world it knows.
+
+"Because the user told me to" is not a complete explanation. A fuller chain includes the system's own standing intent to follow that instruction, the rule that connected it to an action, the capability that authorized the action, and the result.
+
+Built-in policies use the same kind of knowledge as user-created policies. Retention, explanation, initiative, and self-audit begin with defaults, but authorized parts may be inspected and changed by the owner.
+
+### Initiative and bounded autonomy
+
+USERCOOP may act on its own initiative. It can advance inference, bring information forward, pilot the screen, begin an authorized procedure, or ask the user for knowledge it needs.
+
+Initiative is bounded programmatically and modularly. The user determines:
+
+- Which folder or other local scope is visible.
+- Which device capabilities are authorized.
+- Which parts of the knowledge base are open to modification.
+- Which rules may initiate actions and which require confirmation.
+
+External network access is never among the available capabilities. A rule cannot escape the capability boundary merely because its conclusion recommends an action.
+
 ### The device as a known world
 
 The device is where USERCOOP runs, one of the worlds it knows about, and an environment in which it can act. Files, folders, applications, processes, settings, notifications, hardware state, typed lines, and operation results can all become objects, facts, events, or actions within the knowledge base.
@@ -162,7 +198,9 @@ A session is not merely the duration for which an executable remains open, a con
 
 Within the system, the session can be known through its current activities, ongoing work, completed steps, elapsed time, relevant objects, commitments, events, and changes of direction. Within the user's life, it is the actual period in which attention, effort, choice, and progress occur. USERCOOP's cooperation happens where those two descriptions meet.
 
-The session is therefore the current focal perdurant around which the active knowledge display, activity stack, ongoing-stuff list, attention model, and temporal rules are composed. Activities do not float in an abstract interface; they occur during this lived session and contribute to its development.
+The session is therefore the current focal perdurant around which the active knowledge display, activity stack, `ongoing stuff` list, attention model, and temporal rules are composed. Activities do not float in an abstract interface; they occur during this lived session and contribute to its development.
+
+Time is part of the ontology, not merely a timestamp attached to facts. USERCOOP should represent events, states, intervals, and their relations. Allen's interval algebra is an initial foundation for relations such as before, during, overlapping, meeting, and finishing.
 
 ### Cooperation in lived time
 
@@ -187,7 +225,7 @@ USERCOOP is a semantic interaction layer through which the user pilots the devic
 
 The command stream serves two purposes at once:
 
-1. It tells applications what the user wants to do.
+1. It states what the user wants USERCOOP to know, infer, or do.
 2. It provides an ongoing trace of what currently occupies the user's attention.
 
 The display responds to that trace. It selects information, changes its level of detail, adjusts how much is simultaneously visible, moves focus, and reveals valid continuations while the instruction is still being composed.
@@ -213,10 +251,11 @@ The result is neither a conventional graphical desktop nor a conventional termin
 9. **Support the device's input modes.** Keyboard interaction is primary where available, but every action remains accessible through mouse or touch.
 10. **Remain offline by construction.** USERCOOP must be programmatically unable to reach external networks. Its operation must never depend on Internet access or a remote service, and this boundary has no protocol-specific exception.
 11. **Reward attention without demanding it.** A refinement should be perceptible to someone who attends to it while remaining unobtrusive to someone who does not. USERCOOP favors effects that can be noticed without insisting on being noticed.
+12. **Allow initiative only through capabilities.** USERCOOP may ask, infer, present, and act on its own initiative, but only within user-defined knowledge and device boundaries.
 
 ## Offline by construction
 
-Offline operation is a foundational property of USERCOOP, not merely a mode, preference, or promise about ordinary behavior. The application should be architected so that its normal runtime cannot initiate or receive communication across an external network.
+Offline operation is a foundational property of USERCOOP, not merely a mode, preference, or promise about ordinary behavior. The application must be architected so that its runtime cannot initiate or receive communication across an external network.
 
 This boundary keeps operation of the device local, makes the system useful without connectivity, and prevents the interaction layer from becoming an implicit conduit through which device activity or command history can leave the device. No adapter or extension may silently weaken this property.
 
@@ -246,7 +285,7 @@ This principle concerns USERCOOP itself. Launching a mail composer, browser, or 
 
 USERCOOP shows the user the vocabulary, information, and actions relevant to the current activity. An application does not present a parallel interface inside USERCOOP. USERCOOP remains the interaction system throughout.
 
-[Symbolfront](https://github.com/symbolworks/symbolfront) is relevant prior art for one narrower idea: command vocabulary can be supplied by the current context instead of being permanently hard-coded as one global command set. USERCOOP adopts that principle within its own activity model; it does not adopt Symbolfront's client architecture or make Symbolfront part of the runtime.
+[Symbolfront](https://github.com/symbolworks/symbolfront) is relevant prior art for one narrower idea: command vocabulary can be supplied by the current context instead of being permanently hard-coded as one global command set. USERCOOP adopts that principle within its own activity model; Symbolfront is not part of the runtime.
 
 An activity is a temporary semantic environment:
 
@@ -432,7 +471,7 @@ Deleting history never resets the line counter. A citation such as `line 47` the
 
 Applications and device capabilities respond through ordinary operation correlation and never need to know USERCOOP's local line numbers. USERCOOP knows which local line caused an operation and may cite it when presenting the result. Separate USERCOOP installations therefore need no synchronized numbering.
 
-Past history is itself retrieved through a command such as `SHOW LINE 47`. Mouse scrolling remains available as an accessibility alternative. The requested line is given its own space, accompanied by a small reminder of the command that produced it.
+Past history is itself retrieved through a command such as `SHOW LINE 47`. Mouse or touch scrolling remains available as an accessibility alternative. The requested line is given its own space, accompanied by a small reminder of the command that produced it.
 
 ## Information and spaces
 
@@ -618,7 +657,7 @@ Automatic composition is primarily editorial judgment rather than geometric nove
 
 ### Attention from command traffic
 
-The command stream is the primary attention signal. Something the user repeatedly references, selects, compares, or acts upon remains visible and prominent. Once attention moves elsewhere, it recedes and may eventually be displaced.
+The current session and command stream are the primary attention signals. Something the user repeatedly references, selects, compares, or acts upon remains visible and prominent. Rules and active inference may also bring information forward on USERCOOP's initiative. Once attention moves elsewhere, information recedes and may eventually be displaced.
 
 “Busy with something” is inferred from semantic command activity. No separate behavioral surveillance signal is required.
 
@@ -964,6 +1003,32 @@ KnowledgeEvent
 
 Godot nodes own services and connect them to the engine. Godot resources may hold authored vocabulary, schemas, themes, and test data, but they do not define the runtime knowledge model.
 
+### Knowledge language
+
+Facts and rules use short natural-language patterns with deterministic matching and rewriting. The approach is informed by string-rewriting systems and rule languages such as AIML, RiveScript, and ChatScript, while supporting both forward and backward chaining.
+
+Datalog is the closest formal model. The surface language remains terse, sequential, and easy to teach. Its syntax is deliberately limited; its inference capabilities need not be shallow.
+
+[LPS (Logic-based Production System)](https://www.doc.ic.ac.uk/~rak/papers/RuleML.pdf), developed by Robert Kowalski and Fariba Sadri, is another relevant reference. Its combination of logic programs, reactive rules, events, actions, changing state, and intentional behavior is especially pertinent to USERCOOP's temporal inference and bounded initiative.
+
+Complex knowledge is built from many clear steps rather than hidden inside elaborate expressions. The same language is used to operate the system, teach it, inspect it, and revise its artifacts.
+
+### Reasoning capabilities
+
+The expert-system core should grow to support:
+
+- Forward and backward chaining.
+- Truth maintenance and dependency tracking.
+- Hypothetical reasoning without committing hypotheses as facts.
+- Explicit management of uncertainty.
+- Causal models informed by Pearl's work on intervention and causation.
+- Ontologies rooted in USERCOOP's subjective upper ontology.
+- Explanations grounded in stored derivations, intentions, permissions, and outcomes.
+
+Explainability serves both the user and USERCOOP itself. Derivation and action histories allow the system to audit its behavior, identify weak knowledge, and improve through authorized changes.
+
+Retention policy is also knowledge. USERCOOP ships with rules for preserving explanations and traces, but the owner may revise the authorized parts of those rules.
+
 ### Incremental inference
 
 Inference develops over time. It must not freeze Godot while privately calculating a finished answer.
@@ -989,7 +1054,11 @@ Provisional results remain distinct from settled knowledge. Cancellation, inspec
 
 Knowledge, rules, provenance, sessions, and histories persist locally. Storage must be versioned, recoverable, and able to represent changes without discarding their origin.
 
-The first implementation places persistence behind a small interface. A simple local format is enough at first. A local database may replace it later if querying, transactionality, or scale requires one. Persistence never introduces external synchronization or network dependence.
+SQLite is the expected durable store. It provides local transactions, indexes, scale, and inspection without introducing a server or network dependency. Persistence remains behind a small interface so the semantic model does not become a database schema by accident.
+
+Some knowledge artifacts should also be browsable from an IDE. Rules, definitions, and interaction-created material may have readable source representations beside the database. The user normally changes them through USERCOOP's own language in an interaction closer to an `ed` session than to hand-editing source files.
+
+The database and readable artifacts serve different purposes: reliable indexed state on one side, inspectable and versionable expressions of knowledge on the other. USERCOOP remains the authority that keeps them coherent.
 
 ### Initial implementation direction
 
