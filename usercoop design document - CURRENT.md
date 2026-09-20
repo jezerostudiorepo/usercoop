@@ -148,7 +148,7 @@ space
 
 Teaching USERCOOP and using USERCOOP are the same ongoing activity. The user does not first prepare an expert system and later consult it. Facts, vocabulary, rules, procedures, corrections, and questions accumulate while the system is already being used.
 
-A new installation begins as an expert system primarily about itself: what it is, what it intends, what it can do, how it reasons, and which parts of itself the user may change. It becomes personal through continued interaction.
+A new installation begins as an expert system primarily about itself: what it is, what it intends, what it can do, how it reasons, and which parts of its knowledge it is permitted to modify on its own. It becomes personal through continued interaction.
 
 The system must support sophisticated knowledge when the user supplies it. A personal scope does not imply simple subject matter or shallow inference.
 
@@ -160,7 +160,7 @@ This is subjective in the sense of viewpoint, not emotion. Identity, intention, 
 
 "Because the user told me to" is not a complete explanation. A fuller chain includes the system's own standing intent to follow that instruction, the rule that connected it to an action, the capability that authorized the action, and the result.
 
-Built-in policies use the same kind of knowledge as user-created policies. Retention, explanation, initiative, and self-audit begin with defaults, but authorized parts may be inspected and changed by the owner.
+Built-in policies use the same kind of knowledge as user-created policies. Retention, explanation, initiative, and self-audit begin with defaults. The owner may inspect and change any of them. USERCOOP may change them on its own only where the owner has explicitly granted that authority.
 
 ### Initiative and bounded autonomy
 
@@ -170,7 +170,7 @@ Initiative is bounded programmatically and modularly. The user determines:
 
 - Which folder or other local scope is visible.
 - Which device capabilities are authorized.
-- Which parts of the knowledge base are open to modification.
+- Which parts of the knowledge base USERCOOP may modify on its own initiative.
 - Which rules may initiate actions and which require confirmation.
 
 External network access is never among the available capabilities. A rule cannot escape the capability boundary merely because its conclusion recommends an action.
@@ -1025,9 +1025,9 @@ The expert-system core should grow to support:
 - Ontologies rooted in USERCOOP's subjective upper ontology.
 - Explanations grounded in stored derivations, intentions, permissions, and outcomes.
 
-Explainability serves both the user and USERCOOP itself. Derivation and action histories allow the system to audit its behavior, identify weak knowledge, and improve through authorized changes.
+Explainability serves both the user and USERCOOP itself. Derivation and action histories allow the system to audit its behavior, identify weak knowledge, and improve where it has authority to modify its own knowledge.
 
-Retention policy is also knowledge. USERCOOP ships with rules for preserving explanations and traces, but the owner may revise the authorized parts of those rules.
+Retention policy is also knowledge. USERCOOP ships with rules for preserving explanations and traces. The owner may revise any of those rules; USERCOOP may revise them autonomously only within its granted write scope.
 
 ### Incremental inference
 
