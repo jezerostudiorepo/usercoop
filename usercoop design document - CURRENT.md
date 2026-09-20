@@ -36,7 +36,7 @@ Example commands are written in the style USERCOOP will use, but they indicate f
 **[Part IV. Information and presentation](#part-iv-information-and-presentation)**
 
 - [11. Information items and spaces](#11-information-items-and-spaces)
-- [12. Authorship, typed lines, and history](#12-authorship-typed-lines-and-history)
+- [12. Authorship, typed entries, and history](#12-authorship-typed-entries-and-history)
 - [13. Typography](#13-typography)
 - [14. Presentation preferences](#14-presentation-preferences)
 - [15. Attention and automatic composition](#15-attention-and-automatic-composition)
@@ -97,17 +97,89 @@ The user can state facts, retrieve knowledge, define concepts, establish rules, 
 
 An immediate instruction, a reusable definition, a query, and a rule for future action all operate on the same semantic world. They need not compress their whole interaction into one line. Context can be established first and then receive the kind of expression it expects:
 
-```text
-ASSERT FACTS
-ALICE WORK ON ORION
-DONE
+```C
+//usr:
 
-SHOW WHO WORK ON ORION
-DEFINE ACTIVE PROJECT AS PROJECT WITHOUT COMPLETION DATE
-WHEN PROJECT COMPLETED ARCHIVE WORKING FILES
+    NEW ENTRY
+    CATEGORY PEOPLE
+    FACTS
+    ALICE WORKS ON orion
+    PAUL TOO
+
+//sys:
+
+    2 FACTS SAVED
+    WHAT IS ORION
+
+//usr:
+
+    ORION IS
+    CATEGORY PROJECTS
+    NEW PROJECT
+
+//sys:
+
+    PROJECT ORION SAVED
+
+//usr:
+
+    TODO THIS WEEK
+    DEFINE ORION
+    IMPORTANCE HIGH
+
+//sys:
+
+    1 TASK SAVED
 ```
 
-`ASSERT FACTS` is an imperative instruction that enters a declarative context. Within that context, `ALICE WORK ON ORION` can only be a fact offered for assertion. `DONE` leaves that context after the single fact. The remaining lines are articulated requests whose leading forms establish what USERCOOP is to do, while their complements may contain smaller grammatical constructs such as `WHO WORK ON ORION`.
+Then later:
+
+```C
+//usr:
+
+    REQUEST
+    WHO WORKS ON ORION
+
+//sys:
+
+    CATEGORY PROJECTS
+    ALICE
+    PAUL
+    TOTAL 2 PEOPLE WORK ON ORION
+```
+
+Defining a deduction:
+
+```C
+//usr:
+
+    NEW ENTRY
+    CONCEPT PROJECT
+    DEDUCTIONS
+    PROJECT p IS ACTIVE PROJECT
+    IF NOT p HAS COMPLETION DATE
+
+//sys:
+
+    1 DEDUCTION SAVED
+```
+
+Creating a behavior:
+
+```C
+//usr:
+
+    NEW ENTRY
+    PRODUCTIONS
+    WHEN PROJECT p IS COMPLETE
+    THEN ARCHIVE WORKING FILES OF p
+
+//sys:
+
+    1 PRODUCTION SAVED
+```
+
+These examples are scenes showing what it's like to work with USERCOOP. The language grammar and vocabulary are fully customizable, like everything else in the system.
 
 USERCOOP distinguishes knowledge explicitly stated by the user, observed from the device, derived through rules, and produced by actions. A derivation follows inspectable deterministic rules. Ambiguity, contradiction, and failure become information items rather than occasions for the system to guess. When more than one valid reading remains, USERCOOP exposes the alternatives and asks the user to resolve them.
 
@@ -154,7 +226,7 @@ A rule cannot escape the capability boundary merely because its conclusion recom
 
 ### 2.5 The device as a known world
 
-The device is where USERCOOP runs, one of the worlds it knows about, and an environment in which it can act. Files, folders, applications, processes, settings, notifications, hardware state, typed lines, and operation results can all become objects, facts, events, or actions within the knowledge base.
+The device is where USERCOOP runs, one of the worlds it knows about, and an environment in which it can act. Files, folders, applications, processes, settings, notifications, hardware state, typed entries, and operation results can all become objects, facts, events, or actions within the knowledge base.
 
 Device management is therefore an expert domain of USERCOOP rather than a collection of unrelated utilities. Device facts participate in queries, rules, and procedures just like user-defined knowledge:
 
@@ -202,7 +274,7 @@ The interface is not a collection of windows that the user must arrange and moni
 
 USERCOOP is a semantic interaction layer through which the user pilots the device. Rather than requiring the user to navigate the separate interfaces of files, applications, notifications, and system facilities, it coordinates those existing capabilities around the user's current intention.
 
-The command stream serves two purposes at once:
+The stream of user entries serves two purposes at once:
 
 1. It states what the user wants USERCOOP to know, infer, or do.
 2. It provides an ongoing trace of what currently occupies the user's attention.
@@ -219,9 +291,9 @@ The result is neither a conventional graphical desktop nor a conventional termin
 
 ## 5. Design principles
 
-1. **Never guess.** An instruction resolves deterministically, exposes its remaining ambiguity for the user to resolve, or fails when it has no valid reading. USERCOOP never silently chooses a merely plausible interpretation. Failure generates a semantic event associated with the originating input line.
+1. **Never guess.** An entry resolves deterministically, exposes its remaining ambiguity for the user to resolve, or fails when it has no valid reading. USERCOOP never silently chooses a merely plausible interpretation. Failure generates a semantic event associated with the originating entry.
 2. **Reveal the current language.** The system shows what is valid in the present context instead of requiring memorization of a global command set.
-3. **React before submission.** A partial instruction may already resolve objects, narrow possibilities, and reorganize the display.
+3. **React before submission.** A partial entry may already resolve objects, narrow possibilities, and reorganize the display.
 4. **Preserve authorship spatially.** User-authored and system-generated information items receive visibly distinct presentations, so their origin is apparent without classifying their content.
 5. **Compose the display automatically.** The system decides what appears, where, and at what scale.
 6. **Treat preferences as defaults, not prohibitions.** Explicit requests and genuine information requirements may temporarily override the user's resting presentation preferences.
@@ -315,7 +387,7 @@ Command execution is therefore treated as its own capability class with stricter
 
 - It is denied by default and must be granted deliberately.
 - A grant names either specific command forms or an allowlist of executables. A grant of "any command" is possible but is presented as what it is: a removal of the boundary that the rest of the design maintains.
-- Every execution is recorded with its originating line, the rule or procedure that produced it, the capability that authorized it, and its result.
+- Every execution is recorded with its originating entry, the rule or procedure that produced it, the capability that authorized it, and its result.
 - A command that a rule produced on USERCOOP's own initiative requires confirmation unless the user has granted that specific command form for unattended use.
 - Execution never becomes implicit. USERCOOP shows what it is about to run in the same terms the user would have typed.
 
@@ -388,9 +460,7 @@ The user enters an activity, performs the work appropriate to it, and leaves whe
 
 This is not equivalent to opening and closing an application window. An activity may draw on several knowledge domains and device capabilities while remaining one coherent cognitive context.
 
-Activities may also establish the grammatical role of the next input. An imperative instruction can enter a declarative, imperative, or interrogative context before the content itself is given. For example, after `ASSERT FACTS`, a bare proposition is known to be material for assertion rather than a question or an immediate command. The context remains active for another proposition until the user completes or leaves it.
-
-This stepwise construction is deliberate. USERCOOP asks for one kind of thing at a time and remembers the commitments already made, instead of requiring the user to repeat them through flags, punctuation, or a large all-purpose syntax.
+The active activity contributes context to the current grammar. It may change the vocabulary, patterns, or continuations presently available, according to definitions the user can inspect and modify. Context therefore reduces repetition without imposing one universal syntax on every activity.
 
 ## 9. Command language
 
@@ -400,21 +470,19 @@ SHRDLU is a spiritual ancestor rather than a syntax to copy. Its natural-languag
 
 REXX contributes the principle of least astonishment: the meaning of an instruction should follow from its visible words, without hidden precedence surprises or punctuation doing silent work.
 
-### 9.1 Modes, context, and deterministic interpretation
+### 9.1 Custom grammar and deterministic interpretation
 
-USERCOOP's language uses declarative, imperative, and interrogative modes. Mode is established by the active activity, by the leading form of the current instruction, or by both together.
+The language is not an invariant of USERCOOP. Its grammar is part of the programmable knowledge base. USERCOOP begins with a usable grammar, but the owner may revise or replace it just as they may revise other knowledge.
 
-- A declarative expression offers a proposition within a context that is ready to receive one.
-- An imperative expression asks USERCOOP to act or establishes a more specific activity, such as `ASSERT FACTS`.
-- An interrogative expression describes knowledge to retrieve, either independently in a questioning context or as a construct inside an imperative such as `SHOW WHO WORK ON ORION`.
+A grammar may distinguish declarative, imperative, and interrogative modes; accept concise administrative forms such as those in the examples; provide synonyms or inflected forms such as `WORK` and `WORKS`; and define how constructs occupy slots inside larger constructs. These are facilities available to the grammar, not fixed words or mandatory categories built into the interaction system.
 
-Context does not replace grammar. It narrows the role of the line; grammar articulates the request within that role. A verb may take a simple complement such as a word or number, or a modular construct such as `HELD BLOCK` or `WHO WORK ON ORION`. Constructs can fill slots inside larger patterns, allowing expressive instructions to grow from small understandable parts.
+Context does not replace grammar. It supplies information to the active grammar, which may use the current activity and earlier parts of an entry to interpret what follows. This permits stepwise articulation without requiring every intention to be compressed into one elaborate command.
 
-USERCOOP does not seek to imitate unrestricted prose. Its vocabulary is terse, its predicates may use stable uninflected forms, and punctuation is not part of its grammar. Word order, reserved forms, semantic types, and the current context carry the structure.
+The supplied grammar follows the intended terse, punctuation-free direction, but it does not seek to imitate unrestricted prose. A customized grammar remains deterministic: customization changes the definitions by which entries are understood, not the requirement that USERCOOP know which definition it applied.
 
-- A command that resolves cleanly is accepted.
-- A submitted command with no valid reading does not execute and generates a failure event associated with its input line.
-- A submitted command with several valid readings does not execute yet. USERCOOP enters a clarification activity, presents the alternatives in the terms that distinguish them, and accepts a selection or further expression from the user.
+- An entry that resolves cleanly is accepted.
+- A submitted entry with no valid reading does not execute and generates a failure event associated with that entry.
+- A submitted entry with several valid readings does not execute yet. USERCOOP enters a clarification activity, presents the alternatives in the terms that distinguish them, and accepts a selection or further entry from the user.
 - Fuzzy matching never silently substitutes a plausible interpretation.
 - Every intermediate reduction follows an ordered, inspectable pattern list.
 
@@ -422,7 +490,13 @@ Clarification is a normal continuation of the activity, not an admission that na
 
 ### 9.2 Patterns and composition
 
-Patterns use word position rather than punctuation to mark argument roles:
+#### Multiline entries
+
+The unit of submission is an entry, not a physical line. USERCOOP treats the entry as unfinished until the user submits an empty line by pressing Enter twice after the last content line. A single Enter only adds another line to the same entry. An active grammar may define words such as `DONE` as explicit alternatives to the empty terminating line.
+
+The grammar currently in force determines how the lines of an entry relate, what may be omitted or inferred from context, and what each construct means. The examples above intentionally leave those definitions unstated: they demonstrate pace and character rather than standardizing their syntax.
+
+The supplied grammar can use word position rather than punctuation to mark argument roles:
 
 ```text
 PUT x INTO y
@@ -456,11 +530,11 @@ Selections and results can be piped into later operations or stored in named var
 
 ## 10. Live composition
 
-The screen reacts while the user types. Submission is not the first moment at which an instruction has meaning.
+The screen reacts while the user composes a multiline entry. Submission is not the first moment at which the entry has meaning.
 
 ### 10.1 Incremental semantic state
 
-For every partial instruction, the parser exposes:
+For every partial entry, the parser exposes:
 
 - Recognized keywords.
 - Resolved subexpressions.
@@ -471,13 +545,13 @@ For every partial instruction, the parser exposes:
 - Temporary activity contexts.
 - Likely spatial or informational focus.
 
-This state drives the display immediately without executing the unfinished instruction.
+This state drives the display immediately without executing the unfinished entry. Completed lines remain provisional until the terminating empty line, but they already constrain the interpretation of later lines and may affect the display.
 
 ### 10.2 Valid continuations
 
-The interface always shows what may validly follow from the current parser state. These are contextual possibilities, not a global command catalog.
+The interface always shows what may validly follow from the current parser state and the active grammar. These may include continuations of the current line or possible next lines. They are contextual possibilities, not a global command catalog or a list of mandatory fields.
 
-Entering an activity narrows the language. Filling an argument narrows it again. Completing or abandoning the activity restores the parent vocabulary.
+Entering an activity narrows the language. Beginning an entry, filling an argument, or completing a line narrows it again. Submitting or abandoning the entry and completing or leaving the activity restore the appropriate parent vocabulary.
 
 ### 10.3 Case as parser feedback
 
@@ -496,9 +570,9 @@ The first implementation provides a Latin-script command vocabulary. Unicode tex
 
 ### 10.4 Provisional cognitive context
 
-Resolved portions of an unfinished instruction already affect the surrounding display.
+Resolved portions of an unfinished entry already affect the surrounding display.
 
-While composing:
+Within one line of an entry, while composing:
 
 ```text
 PUT BLOCK TALLER THAN HELD BLOCK INTO BOX
@@ -506,7 +580,7 @@ PUT BLOCK TALLER THAN HELD BLOCK INTO BOX
 
 the interface may progress as follows:
 
-| Partial instruction | Provisional response |
+| Partial construct | Provisional response |
 |---|---|
 | `PUT` | Open an operation context |
 | `PUT BLOCK` | Make candidate blocks relevant |
@@ -516,7 +590,7 @@ the interface may progress as follows:
 | `PUT BLOCK TALLER THAN HELD BLOCK INTO` | Make candidate destinations relevant |
 | `PUT BLOCK TALLER THAN HELD BLOCK INTO BOX` | Resolve the destination and present the complete operation |
 
-If `HELD BLOCK` deterministically resolves to an object, a spatial view may begin panning and zooming toward it before the outer command is complete. Backspacing or changing the instruction unwinds that provisional context.
+If `HELD BLOCK` deterministically resolves to an object, a spatial view may begin panning and zooming toward it before the outer construct or entry is complete. Backspacing, changing an earlier line, or abandoning the entry unwinds that provisional context.
 
 This movement is intended. The display should appear to live alongside rapid typing, as in the keyboard-driven scenes that inspired it.
 
@@ -530,7 +604,7 @@ This movement is intended. The display should appear to live alongside rapid typ
 | Keystroke to updated valid continuations | 50 ms | 100 ms |
 | Resolution of a referent to the start of camera movement | 100 ms | 200 ms |
 
-Parsing a partial line must be incremental. Re-parsing the whole line from the first character on every keystroke is acceptable only while it stays inside these targets, and the design should not assume it will.
+Parsing a partial entry must be incremental. Re-parsing the whole entry from its first character on every keystroke is acceptable only while it stays inside these targets, and the design should not assume it will.
 
 Inference results are exempt. They arrive when they arrive, and [section 22.5](#225-incremental-inference) describes how they are presented while incomplete.
 
@@ -544,7 +618,7 @@ An information item describes something USERCOOP may need to manage: its meaning
 
 Neither is a window or a card. An information item does not prescribe a rectangle, coordinates, or visual hierarchy. One item may move between spaces or representations as attention changes, and several related items may share a space when USERCOOP judges that they belong together.
 
-The screen is not divided into applications, windows, or a terminal plus an output area. It is one composed workspace containing spaces. A space gives temporary visual presence to an information item or a related group of them: a line being typed, a submitted line, a set of valid continuations, a notification, a spatial view, or another part of the current activity. USERCOOP creates, emphasizes, transforms, moves, and releases spaces as it composes the screen around the current activity.
+The screen is not divided into applications, windows, or a terminal plus an output area. It is one composed workspace containing spaces. A space gives temporary visual presence to an information item or a related group of them: an entry being composed, a submitted entry, a set of valid continuations, a notification, a spatial view, or another part of the current activity. USERCOOP creates, emphasizes, transforms, moves, and releases spaces as it composes the screen around the current activity.
 
 ### 11.1 Semantic content
 
@@ -587,31 +661,31 @@ An information item may support several semantic representations rather than arb
 
 These representations concern granularity. They do not determine how many other information items may simultaneously be given space.
 
-## 12. Authorship, typed lines, and history
+## 12. Authorship, typed entries, and history
 
 The distinction between what the user authored and what the system generated is spatial rather than conversational. User-authored information items receive recognizably different spaces from results, failures, notifications, and other system-generated information. An observer can therefore recognize origin from placement and presentation without first reading and classifying the content.
 
-### 12.1 Typed-line information
+### 12.1 Typed-entry information
 
-A line being typed is itself an information item known to USERCOOP. While it is being composed, it is mutable and carries its current text together with the semantic state produced by incremental parsing. Submission changes it into a submitted-line information item and assigns it a permanent line number.
+An entry being typed is itself an information item known to USERCOOP. The current line being typed is also known separately as the mutable part of that entry; it is not identical to the space that happens to show it. The unfinished entry contains that line, any preceding physical lines, and the semantic state produced by incremental parsing. A single Enter completes the current physical line and begins another within the same entry. An empty line submits the entry, changes it into a submitted-entry information item, and assigns it a permanent entry number.
 
-The information item and its visual presentation are distinct. The line does not inherently occupy a particular position, size, or shape, and it is not itself a space.
+The entry and its individual lines are known information. They do not inherently occupy a particular position, size, or shape, and they are not themselves spaces.
 
-### 12.2 Spaces showing typed lines
+### 12.2 Spaces showing typed entries
 
-USERCOOP ordinarily gives the line being typed a large, prominent space, and gives recently submitted lines separate, smaller spaces nearby. Those choices provide continuity without forming a terminal, console, transcript, or chronological input-output stream.
+USERCOOP ordinarily gives the current line of the entry a large, prominent space. Earlier lines of the same unfinished entry remain visibly associated with it, and recently submitted entries receive separate, smaller spaces nearby. Those choices provide continuity without forming a terminal, console, transcript, or chronological input-output stream.
 
-Spaces representing typed-line information show only text authored by the user and parser feedback applied to that text. System-generated results, failures, notifications, and automatic information receive other spaces elsewhere in the composition.
+Spaces representing typed-entry information show only text authored by the user and parser feedback applied to that text. System-generated results, questions, failures, notifications, and automatic information receive other spaces elsewhere in the composition.
 
 ### 12.3 Failure events
 
-A failing command does not answer the user with an explanation and does not add system-generated content to the submitted-line information item. It generates a separate semantic event:
+A failing entry does not answer the user with an explanation and does not add system-generated content to the submitted-entry information item. It generates a separate semantic event:
 
 ```text
-input line 47 failure
+input entry 47 failure
 ```
 
-That event becomes another information item managed by USERCOOP. It may receive importance, be given a space, affect attention, persist, recede, or be displaced under the same composition principles as other information. Its stable association with the submitted-line item lets USERCOOP present the failure in context without changing the user-authored item.
+That event becomes another information item managed by USERCOOP. It may receive importance, be given a space, affect attention, persist, recede, or be displaced under the same composition principles as other information. Its stable association with the submitted-entry item lets USERCOOP present the failure in context without changing the user-authored item.
 
 The event may contain structured fields needed by USERCOOP to identify and manage the failure, but it is not inherently a prose response or conversational explanation. The presentation of those fields remains a decision of the interaction system.
 
@@ -619,15 +693,15 @@ The term "failure event" is used throughout this document for this construct. Pa
 
 ### 12.4 History and citation
 
-History and line numbers belong to the local USERCOOP installation. The user may configure what is visible and delete local history.
+History and entry numbers belong to the local USERCOOP installation. The user may configure what is visible and delete local history.
 
-Deleting history never resets the line counter. A citation such as `line 47` therefore always identifies the same command, even if that command has since been deleted. A request for a deleted line generates a system information item.
+Deleting history never resets the entry counter. A citation such as `entry 47` therefore always identifies the same submitted entry, even if it has since been deleted. A request for a deleted entry generates a system information item. When a particular physical line matters, it is addressed within its entry, as in `entry 47 line 3`.
 
-The line counter is part of persisted installation state, not of the history table. Restoring from a backup restores the counter, and a restore never reissues a number that was used before the backup was taken. If a restore would do so, USERCOOP advances the counter past the highest number ever recorded rather than reusing it. Stable citation is worth more than contiguous numbering.
+The entry counter is part of persisted installation state, not of the history table. Restoring from a backup restores the counter, and a restore never reissues a number that was used before the backup was taken. If a restore would do so, USERCOOP advances the counter past the highest number ever recorded rather than reusing it. Stable citation is worth more than contiguous numbering.
 
-Applications and device capabilities respond through ordinary operation correlation and never need to know USERCOOP's local line numbers. USERCOOP knows which local line caused an operation and may cite it when presenting the result. Separate USERCOOP installations therefore need no synchronized numbering.
+Applications and device capabilities respond through ordinary operation correlation and never need to know USERCOOP's local entry numbers. USERCOOP knows which local entry caused an operation and may cite it when presenting the result. Separate USERCOOP installations therefore need no synchronized numbering.
 
-Past history is retrieved through a command such as `SHOW LINE 47`. Mouse or touch scrolling remains available as an equivalent path. The requested line is given its own space, accompanied by a small reminder of the command that produced it.
+Past history is retrieved through a request such as `SHOW ENTRY 47`. Mouse or touch scrolling remains available as an equivalent path. The requested entry is given its own space, accompanied by a small reminder of the request that retrieved it.
 
 ## 13. Typography
 
@@ -763,7 +837,7 @@ Automatic composition is primarily editorial judgment rather than geometric nove
 
 ### 15.1 Attention from command traffic
 
-The current session and command stream are the primary attention signals. Something the user repeatedly references, selects, compares, or acts upon remains visible and prominent. Rules and active inference may also bring information forward on USERCOOP's initiative. Once attention moves elsewhere, information recedes and may eventually be displaced.
+The current session and stream of user entries are the primary attention signals. Something the user repeatedly references, selects, compares, or acts upon remains visible and prominent. Rules and active inference may also bring information forward on USERCOOP's initiative. Once attention moves elsewhere, information recedes and may eventually be displaced.
 
 "Busy with something" is inferred from semantic command activity: what the user is naming, resolving, and acting on. No surveillance signal beyond the interaction timing of section 14.3 is collected.
 
@@ -787,7 +861,7 @@ DOI(x) = API(x) - D(x, y)
 
 `API(x)` is a priori importance. `D(x, y)` is distance from the current focus, which Furnas permits to be logical or task distance rather than physical distance.
 
-Here, task distance is derived from the active activity stack and command stream: recency of reference, frequency of reference, semantic relationship to resolved command objects, and relationship to unfinished slots.
+Here, task distance is derived from the active activity stack and entry stream: recency of reference, frequency of reference, semantic relationship to resolved entry objects, and relationship to unfinished slots.
 
 Both terms are normalized to the same `0` to `1` scale, so that the subtraction is meaningful. `D` is `0` for the current focus and approaches `1` for information with no discernible relationship to the current activity. Consequently `DOI` falls in the range `-1` to `1`, and only non-negative values compete for space.
 
@@ -960,7 +1034,7 @@ The vertical ordering of ongoing activities does not imply that one follows anot
 
 Camera movement is the primary intuitive channel through which USERCOOP communicates changes in activity context. Layout and camera are composed together: relevant information develops into an appropriate position, and the camera moves so that the current context is correctly presented in front of the user.
 
-Provisional composition happens where the camera already is. While the user types an unfinished instruction, information may appear, recede, reorder, or receive emphasis around the current place. Local rotation, approach, withdrawal, or reframing may clarify the parser's developing understanding, but provisional interpretation does not pretend that the user has entered another activity location.
+Provisional composition happens where the camera already is. While the user types an unfinished entry, information may appear, recede, reorder, or receive emphasis around the current place. Local rotation, approach, withdrawal, or reframing may clarify the parser's developing understanding, but provisional interpretation does not pretend that the user has entered another activity location.
 
 A committed activity transition is different: the camera literally travels to another place in the spatial composition. Entering a deeper activity develops a destination and moves the camera to it. Completing or leaving that activity retracts its temporary development while the camera returns toward the surviving parent context. Pausing an activity and switching to another moves the camera between their developed line schemas without retracting either one.
 
@@ -1178,7 +1252,7 @@ The root coordinates lifecycle. Knowledge, session, and inference are sibling ru
 
 ### 22.2 Semantic data is not the scene tree
 
-The scene tree represents the running application, not every fact in the knowledge base. Facts, entities, relationships, rules, and derivations are ordinary semantic data rather than one Godot node per item.
+The scene tree represents the running application, not every fact in the knowledge base. Facts, entities, relationships, deductions, productions, and derivations are ordinary semantic data rather than one Godot node per item.
 
 The semantic kernel begins with plain C# types carrying stable identities and explicit value semantics. Likely primitives:
 
@@ -1187,7 +1261,8 @@ EntityId
 KnowledgeValue
 Fact
 Relation
-Rule
+Deduction
+Production
 Query
 Derivation
 Provenance
@@ -1198,13 +1273,13 @@ Godot nodes own services and connect them to the engine. Godot resources may hol
 
 ### 22.3 Knowledge language
 
-Facts and rules use short natural-language patterns with deterministic matching and rewriting. The approach is informed by string-rewriting systems and rule languages such as AIML, RiveScript, and ChatScript, while supporting both forward and backward chaining.
+The grammar is a user-modifiable part of the knowledge system. It maps entries to facts, requests, deductions, productions, and other semantic objects through deterministic matching and rewriting. The implementation is informed by string-rewriting systems and rule languages such as AIML, RiveScript, and ChatScript. Deductions support both forward and backward chaining; productions connect conditions and events to intentional action.
 
-Datalog is the closest formal model. The surface language remains terse, sequential, and easy to teach. Its syntax is deliberately limited; its inference capabilities need not be shallow.
+Datalog is the closest formal model for the inference beneath the customizable surface grammar. USERCOOP ships with a terse, sequential grammar that is easy to teach, but that grammar is a starting point rather than a permanent system syntax. A user may make it smaller, extend it, or replace its vocabulary and constructions without reducing the inference capabilities beneath it.
 
 LPS (Logic-based Production System), developed by Robert Kowalski and Fariba Sadri, is another relevant reference. Its combination of logic programs, reactive rules, events, actions, changing state, and intentional behavior is especially pertinent to USERCOOP's temporal inference and bounded initiative.
 
-Complex knowledge is built from many clear steps rather than hidden inside elaborate expressions. The same language is used to operate the system, teach it, inspect it, and revise its artifacts.
+The supplied grammar favors building complex knowledge from many clear steps rather than hiding it inside elaborate expressions. Whatever grammar is active is used to operate the system, teach it, inspect it, and revise its artifacts, including the grammar itself.
 
 ### 22.4 Reasoning capabilities
 
@@ -1255,10 +1330,10 @@ The database and readable artifacts serve different purposes: reliable indexed s
 
 **Moving between devices.** A person with a laptop and a phone will want their knowledge in both places, and USERCOOP cannot synchronize over a network. The design therefore treats portability as a file problem, not a service problem:
 
-- A complete export is a single local file containing knowledge, rules, provenance, capability grants, history, and the line counter.
+- A complete export is a single local file containing knowledge, rules, provenance, capability grants, history, and the entry counter.
 - Export and import are ordinary authorized local actions. Moving the file between devices is the user's business and happens outside USERCOOP, by whatever means they already use.
 - Import is explicit and inspectable. It reports what it will add, what conflicts with existing knowledge, and what it will not carry over. Capability grants never transfer silently, because a grant refers to a scope on one particular device.
-- Restoring from an export follows the line-counter rule of section 12.4.
+- Restoring from an export follows the entry-counter rule of section 12.4.
 
 Diverged installations are merged explicitly, never by silent synchronization. When a common ancestry exists, import performs a three-way semantic comparison using stable identities and provenance. Compatible additions are proposed together; contradictory facts, rule changes, deletions, and competing names become conflict information items for the user to resolve. Without common ancestry, the imported material first enters as a named knowledge source and remains distinct until the user accepts particular additions or reconciliations. Capability grants never merge or transfer between devices.
 
@@ -1268,13 +1343,13 @@ The distinctive claims of this design are testable, and the ones that are not te
 
 | Claim | How it is tested |
 |---|---|
-| Never guess | Property tests over generated inputs: every input resolves to one reading, enters clarification with every remaining valid reading exposed, or produces a failure event when no reading exists. No input silently commits a second-choice interpretation. |
+| Never guess | Property tests over generated entries: every entry resolves to one reading, enters clarification with every remaining valid reading exposed, or produces a failure event when no reading exists. No entry silently commits a second-choice interpretation. |
 | Offline by construction | Build-time static analysis plus the runtime observation test of section 6.3. |
-| Deterministic parsing | Golden tests over a pattern corpus, including precedence cases and reserved-word collisions. |
+| Deterministic parsing | Golden tests generated from the grammar currently under test, including multiline entries, contextual patterns, synonyms where defined, precedence cases, and reserved-word collisions. |
 | Frame rate cannot change results | The same inference run at different operation budgets and frame rates produces identical derivations in the same order. |
 | Response targets | Measured per keystroke on each device class, reported as a distribution rather than an average. |
 | Accessibility floors | Automated contrast and minimum-size checks over rendered compositions, plus accessibility-tree assertions for every space type. |
-| Composition stability | Replay of recorded command streams, asserting that background spaces do not oscillate and that minimum display lifetimes hold. |
+| Composition stability | Replay of recorded entry streams, asserting that background spaces do not oscillate and that minimum display lifetimes hold. |
 | Capability enforcement | Every capability class has a test that an ungranted action fails, is reported, and does not partially execute. |
 
 ### 22.8 Initial implementation direction
@@ -1282,7 +1357,7 @@ The distinctive claims of this design are testable, and the ones that are not te
 The first working path is deliberately narrow:
 
 1. Establish the root services and the 2D and 3D rendering layers.
-2. Render the current typed-line information item with the intended typography.
+2. Render the current typed-entry information item with the intended typography and multiline submission behavior.
 3. Build and run steps 1 and 2 on one Android phone before the stack is entrenched.
 4. Add deterministic token recognition and the case or weight feedback channel.
 5. Introduce minimal knowledge identities, facts, and events.
@@ -1307,6 +1382,7 @@ The aim is not to imitate a desktop or complete an expert-system framework befor
 | Criticality | The probability that a closing window will pass before the user returns to the relevant context |
 | Display budget | The maximum number of simultaneous spaces, computed from device area and accessibility settings |
 | Effective importance | Intrinsic importance multiplied by the criticality factor, clamped to one |
+| Entry | The multiline unit of user submission, terminated by an empty line and assigned one permanent history number |
 | Failure event | A semantic event generated when something does not resolve, is not permitted, or does not succeed |
 | Information item | A contextual representation of knowledge, with type, content, provenance, and available actions |
 | Interaction cadence | The user's present typing and progression speed, used only to place presentation on the sport-to-zen scale |
@@ -1315,7 +1391,7 @@ The aim is not to imitate a desktop or complete an expert-system framework befor
 | `ongoing stuff` | The literal name of the list whose members are the currently developed activities |
 | Perdurant | Something that extends and develops through time, such as a session or an activity |
 | Space | The visual presence USERCOOP gives to one or more information items |
-| Task distance | Normalized distance from the current focus, derived from the activity stack and command stream |
+| Task distance | Normalized distance from the current focus, derived from the activity stack and entry stream |
 
 ## 24. References and prior art
 
