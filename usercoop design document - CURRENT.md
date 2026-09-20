@@ -74,7 +74,7 @@ Smartphones and tablets are first-class targets, not ports. Their personal, cont
 
 USERCOOP is an offline, personal, programmable expert system. It lets the user build, examine, extend, and apply knowledge about a locally defined world, and it can operate the device as part of that world.
 
-It is not primarily an application launcher, conversational assistant, or integration layer. It may operate applications as objects on the device, but it is itself the persistent knowledge and action system with which the user cooperates.
+It is not primarily an application launcher, conversational assistant, or integration layer. It may operate applications as objects on the device, but it is itself the persistent knowledge and action system whose role is to cooperate with the user.
 
 "Personal" means that its concepts, vocabulary, classifications, rules, procedures, and stored knowledge belong to the user and remain on the device. It does not refer to an online identity, behavioral profile, or service account.
 
