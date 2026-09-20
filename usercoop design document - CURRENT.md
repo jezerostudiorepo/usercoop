@@ -32,8 +32,8 @@
   - [Command failure events](#command-failure-events)
   - [History and citation](#history-and-citation)
 - [Information and spaces](#information-and-spaces)
-  - [Content belongs to the provider](#content-belongs-to-the-provider)
-  - [Presentation belongs to the host](#presentation-belongs-to-the-host)
+  - [Semantic content](#semantic-content)
+  - [Presentation belongs to USERCOOP](#presentation-belongs-to-usercoop)
   - [Multiple representations](#multiple-representations)
 - [Typography](#typography)
   - [Font system](#font-system)
@@ -67,28 +67,35 @@
 - [Interaction and accessibility](#interaction-and-accessibility)
 - [Visual direction](#visual-direction)
 - [System boundary](#system-boundary)
-  - [Provider responsibilities](#provider-responsibilities)
-  - [Host responsibilities](#host-responsibilities)
-  - [Device capabilities and adapters](#device-capabilities-and-adapters)
-  - [Rendering hosts](#rendering-hosts)
-- [Beyond applications and windows](#beyond-applications-and-windows)
-- [Research questions](#research-questions)
+  - [Semantic kernel](#semantic-kernel)
+  - [Session and inference runtime](#session-and-inference-runtime)
+  - [Device observation and action](#device-observation-and-action)
+  - [Applications and command execution](#applications-and-command-execution)
+  - [Operating-system authority](#operating-system-authority)
+  - [Godot application boundary](#godot-application-boundary)
+- [Personal-device targets](#personal-device-targets)
+- [Implementation](#implementation)
+  - [Initial application structure](#initial-application-structure)
+  - [Semantic data is not the scene tree](#semantic-data-is-not-the-scene-tree)
+  - [Incremental inference](#incremental-inference)
+  - [Persistence](#persistence)
+  - [Initial implementation direction](#initial-implementation-direction)
 
 ## Purpose
 
 This document specifies an interaction system, command model and display model, independent of any one application.
 
-The intended end product is a Godot application that provides a calm, quiet, and restrained alternative to both text-mode terminals and conventional windowing systems. It offers a different way to operate a computer, smartphone, individual application, or set of applications.
+The intended end product is a Godot application that provides a calm, quiet, and restrained alternative to both text-mode terminals and conventional windowing systems. It offers a different way to operate a computer, smartphone, or tablet. Smartphones and tablets are first-class targets: their personal, continuous, touch-oriented use makes them especially appropriate devices for USERCOOP.
 
 USERCOOP acts as a global interaction identity for the device. Here, identity refers to the coherent way the device presents itself and responds to its user, not to the identity of the user. By running USERCOOP, the device acquires a consistent activity model, command language, presentation logic, and interaction character across the capabilities it makes available.
 
-The project is primarily about managing and operating the device. Access to services may be useful where it supports that purpose, but user accounts, personal identity, and service aggregation are not its organizing concern.
+The project is primarily about maintaining and applying personal knowledge through lived sessions, including knowledge of and action upon the device itself. User accounts, online identity, and service aggregation are not its organizing concern.
 
 ## A personal programmable expert system
 
 USERCOOP is an offline, personal, programmable expert system. It lets the user build, examine, extend, and apply knowledge about a locally defined world, and it can operate the device as part of that world.
 
-It is not primarily an application launcher, a conversational assistant, or a front end that delegates meaningful work to online services or specialized application integrations. It is itself the persistent knowledge and action system with which the user cooperates.
+It is not primarily an application launcher, conversational assistant, or integration layer. It may operate applications as objects on the device, but it is itself the persistent knowledge and action system with which the user cooperates.
 
 "Personal" means that its concepts, vocabulary, classifications, rules, procedures, and stored knowledge belong to the user and remain on the device. It does not refer to an online identity, behavioral profile, or service account.
 
@@ -202,8 +209,8 @@ The result is neither a conventional graphical desktop nor a conventional termin
 5. **Compose the display automatically.** The system decides what appears, where, and at what scale.
 6. **Treat preferences as defaults, not prohibitions.** Explicit requests and genuine information requirements may temporarily override the user's resting presentation preferences.
 7. **Be lively in the foreground and stable in the background.** Active composition may cause rapid meaningful movement; unrelated information changes conservatively.
-8. **Keep content semantic.** Applications describe meaning and available action. The host owns presentation.
-9. **Retain full mouse operation.** Keyboard interaction is primary, not exclusive.
+8. **Keep content semantic.** Knowledge describes meaning and available action. USERCOOP owns presentation.
+9. **Support the device's input modes.** Keyboard interaction is primary where available, but every action remains accessible through mouse or touch.
 10. **Remain offline by construction.** USERCOOP must be programmatically unable to reach external networks. Its operation must never depend on Internet access or a remote service, and this boundary has no protocol-specific exception.
 11. **Reward attention without demanding it.** A refinement should be perceptible to someone who attends to it while remaining unobtrusive to someone who does not. USERCOOP favors effects that can be noticed without insisting on being noticed.
 
@@ -211,7 +218,7 @@ The result is neither a conventional graphical desktop nor a conventional termin
 
 Offline operation is a foundational property of USERCOOP, not merely a mode, preference, or promise about ordinary behavior. The application should be architected so that its normal runtime cannot initiate or receive communication across an external network.
 
-This boundary keeps operation of the device local, makes the system useful without connectivity, and prevents the interaction layer from becoming an implicit conduit through which device activity or command history can leave the device. No provider may silently weaken this property.
+This boundary keeps operation of the device local, makes the system useful without connectivity, and prevents the interaction layer from becoming an implicit conduit through which device activity or command history can leave the device. No adapter or extension may silently weaken this property.
 
 Features that conventionally depend on online services are not performed by USERCOOP over the network. Where appropriate, USERCOOP may invoke a capability belonging to another installed application or to the operating system. That external application remains visibly and technically responsible for its own networking, permissions, and results.
 
@@ -223,21 +230,21 @@ Communication confined to the device is permitted when it is needed to connect U
 - Local WebSocket connections bound only to a loopback interface.
 - Operating-system facilities such as local sockets, named pipes, or equivalent inter-process communication.
 
-Such transports are implementation details of an in-device system. They must not listen on externally reachable interfaces, accept remote peers, or provide a route from a local provider to an external network through USERCOOP.
+Such transports are implementation details of an in-device system. They must not listen on externally reachable interfaces, accept remote peers, or provide a route from a local component to an external network through USERCOOP.
 
 "Local" means strictly within the same physical device that is running USERCOOP. Other computers, phones, appliances, or services on a trusted local-area network are external for the purpose of this principle and are not reachable by USERCOOP.
 
 ### External network boundary
 
-The external-network restriction should be enforced programmatically and by architecture rather than relying only on convention. The Godot host and generic runtime should not expose general-purpose Internet clients to providers. Adapters should receive the minimum local capabilities required for their work, and the deployed application should be testable for the absence of externally reachable network paths.
+The external-network restriction should be enforced programmatically and by architecture rather than relying only on convention. USERCOOP must not expose a general-purpose Internet client to its semantic kernel, rules, or adapters. Device adapters receive only the local capabilities required for their work, and the deployed application must be testable for the absence of externally reachable network paths.
 
-The intended implementation is one Godot executable capable of performing the work required by USERCOOP. A separate privileged companion service or general-purpose network broker is not part of the default architecture. Where operating-system integration requires local IPC, USERCOOP may communicate with facilities already belonging to the same device, but the USERCOOP executable remains the coherent application and interaction host.
+The intended implementation is one coherent Godot application capable of performing the work required by USERCOOP. A separate general-purpose network broker is not part of the architecture. Where operating-system integration requires local IPC, USERCOOP may communicate with facilities already belonging to the same device.
 
 This principle concerns USERCOOP itself. Launching a mail composer, browser, or other network-capable application through an operating-system action does not make USERCOOP the network client. The handoff must remain explicit, and USERCOOP must not silently collect, proxy, or transmit the resulting network traffic.
 
 ## Activities and contextual vocabulary
 
-USERCOOP shows the user the vocabulary, information, and actions relevant to the current activity. The user does not interact with a separate client, and an application does not present a parallel interface inside USERCOOP. USERCOOP remains the interaction host throughout.
+USERCOOP shows the user the vocabulary, information, and actions relevant to the current activity. An application does not present a parallel interface inside USERCOOP. USERCOOP remains the interaction system throughout.
 
 [Symbolfront](https://github.com/symbolworks/symbolfront) is relevant prior art for one narrower idea: command vocabulary can be supplied by the current context instead of being permanently hard-coded as one global command set. USERCOOP adopts that principle within its own activity model; it does not adopt Symbolfront's client architecture or make Symbolfront part of the runtime.
 
@@ -261,8 +268,8 @@ Activity
 Activities form a stack. Entering a more specific activity pushes a context; completing, rejecting, or leaving it returns to its parent.
 
 ```text
-Applications
-└── Tasks
+Current session
+└── Manage tasks
     └── New task
         └── Choose date and time
 ```
@@ -271,7 +278,7 @@ The activity stack is cognitive as well as navigational. Each level changes the 
 
 ### Contextual language sources
 
-USERCOOP determines the language currently shown to the user from the active activity and the capabilities available on the device. For built-in device functions, USERCOOP may define that language directly. For an integrated application, a local adapter may describe:
+USERCOOP determines the language currently shown to the user from the active activity, semantic types, rules, and capabilities known to the system. Its kernel defines:
 
 - Commands valid in the current activity.
 - Syntax patterns for those commands.
@@ -280,13 +287,13 @@ USERCOOP determines the language currently shown to the user from the active act
 - Actions that enter, complete, reject, or leave activities.
 - Information items relevant to the activity.
 
-These descriptions supply meaning and capability, not presentation. USERCOOP performs parsing and discovery, shows valid continuations, manages history and attention, gives information space on the screen, and provides the keyboard, mouse, or touch interaction. The application or adapter cannot replace that interaction model with its own interface inside USERCOOP.
+A device adapter may register bounded facts, types, and authorized action signatures with that kernel. It does not define the activity or its presentation. USERCOOP performs parsing and discovery, shows valid continuations, manages history and attention, gives information space on the screen, and provides keyboard, mouse, and touch interaction.
 
 ### Entering and leaving activities
 
 The user enters an activity, performs the work appropriate to it, and leaves when finished. The display adapts for the duration of that activity and releases its temporary information when the activity closes.
 
-This is not equivalent to opening and closing an application window. The activity may use information from several providers while remaining one coherent cognitive context.
+This is not equivalent to opening and closing an application window. An activity may draw on several knowledge domains and device capabilities while remaining one coherent cognitive context.
 
 ## Command language
 
@@ -431,13 +438,11 @@ Past history is itself retrieved through a command such as `SHOW LINE 47`. Mouse
 
 An information item describes something USERCOOP may need to manage: its meaning, identity, content, relevance, and available actions. A space is the presence USERCOOP gives that item on the screen. The information item is semantic; the space is compositional.
 
-Neither is a window or a card. An information item does not prescribe a rectangle, coordinates, or visual hierarchy, and a space is not an application-owned container. One item may move between spaces or representations as attention changes, and several related items may share a space when USERCOOP judges that they belong together.
+Neither is a window or a card. An information item does not prescribe a rectangle, coordinates, or visual hierarchy. One item may move between spaces or representations as attention changes, and several related items may share a space when USERCOOP judges that they belong together.
 
-The model resembles the semantic boundary used by [Microsoft Adaptive Cards](https://learn.microsoft.com/en-us/adaptive-cards/): an author owns the content while the host owns the look and feel. This system extends that boundary by adapting presentation not only to the host, but also to the user's inferred cognitive context.
+### Semantic content
 
-### Content belongs to the provider
-
-A provider defines an information item through:
+An information item is a contextual representation of knowledge. Its definition may include:
 
 - Semantic type.
 - Subject and stable identity.
@@ -446,12 +451,15 @@ A provider defines an information item through:
 - Intrinsic importance.
 - Estimated handling time, when meaningful.
 - Closing window or criticality inputs, when meaningful.
-- Supported semantic representations.
+- Provenance and derivation.
+- Supported representations.
 - Minimum representation required by the current situation.
 
-### Presentation belongs to the host
+Facts observed through a device adapter enter the same knowledge model as facts stated by the user or derived by rules. Intrinsic content such as a document or message remains itself; an adapter does not gain control over how USERCOOP arranges or presents the workspace.
 
-The host decides:
+### Presentation belongs to USERCOOP
+
+USERCOOP decides:
 
 - Whether the information item is currently given space.
 - Where it appears.
@@ -543,7 +551,7 @@ Camera distance changes the room available to an information representation, not
 
 USERCOOP's own text is composed from simple sentences and short lines. When several short statements will communicate something clearly, they are preferred to a dense paragraph or a long line forced into an arbitrary container.
 
-Providers should supply semantic facts, identity, state, relationships, and actions wherever possible. USERCOOP remains responsible for expressing ordinary interface information in its coherent voice. Intrinsic content such as a message, document, or source file remains the content itself and may require longer-form reading.
+Device adapters and importers should supply semantic facts, identity, state, relationships, and actions wherever possible. USERCOOP remains responsible for expressing ordinary interface information in its coherent voice. Intrinsic content such as a message, document, or source file remains the content itself and may require longer-form reading.
 
 Icons and emoji are not part of USERCOOP's interaction vocabulary. The system relies on letters, words, case, weight, scale, alignment, space, and movement rather than asking the user to learn a parallel symbolic language.
 
@@ -604,7 +612,7 @@ The sport-to-zen preference is likewise an equilibrium rather than a fixed anima
 
 ## Automatic composition and attention
 
-The user is not expected to move, resize, close, or scroll through arbitrary windows. The system decides what is shown, how, and where within the host's presentation grammar.
+The user is not expected to move, resize, close, or scroll through arbitrary windows. USERCOOP decides what is shown, how, and where within its presentation grammar.
 
 Automatic composition is primarily editorial judgment rather than geometric novelty. The essential problem is selecting and presenting the right information, not discovering clever coordinates for rectangles.
 
@@ -837,9 +845,9 @@ Explicit requests and urgent contexts may temporarily force greater detail or oc
 
 ## Interaction and accessibility
 
-Keyboard interaction is the intended primary mode. Full mouse-only operation remains a standing requirement.
+Keyboard interaction is the intended primary mode where a keyboard is present. Full mouse-only and touch-only operation remain standing requirements.
 
-Every semantic action available through the command language must have an accessible graphical path. Spatial views support ordinary pointing, dragging, panning, and zooming where appropriate. Keyboard focus is always visible.
+Every semantic action available through the command language must have an accessible direct-manipulation path. Spatial views support ordinary pointing, dragging, panning, and zooming where appropriate. Keyboard focus is always visible when keyboard navigation is active.
 
 Accessibility preferences may constrain motion, typography, contrast, timing, and information capacity. These constraints outrank aesthetic choices.
 
@@ -858,97 +866,142 @@ Calmness is an equilibrium, not immobility. A normally sparse interface may beco
 
 ## System boundary
 
-The interaction system should remain independent of both application domains and rendering technology.
+USERCOOP is one coherent Godot application with internal boundaries between meaning, time, device authority, and presentation.
 
-### Provider responsibilities
+### Semantic kernel
 
-An application provider supplies:
+The semantic kernel owns identities, values, relationships, facts, rules, procedures, queries, provenance, derivations, contradiction, and history. It also owns deterministic parsing and contextual vocabulary.
 
-- Activities and their parent relationships.
-- Contextual commands and syntax patterns.
-- Semantic object types and stable identities.
-- Candidate referents.
-- Information items and supported representations.
-- Available actions and completion behavior.
-- Importance, handling-time, and criticality inputs when known.
-- Authorization over domain mutations.
+The kernel produces semantic state and ordered events. It does not decide coordinates, font sizes, camera paths, or animation.
 
-### Host responsibilities
+### Session and inference runtime
 
-The host supplies:
+The runtime owns the current session, activity stack, ongoing work, command history, temporal events, and inference processes. It advances these perdurants without blocking the application.
 
-- Incremental deterministic parsing.
-- Command discovery and valid continuations.
-- Activity-stack management.
-- Local history and citation.
-- Attention inference from command traffic.
-- Granularity and occupancy preferences.
-- Automatic composition.
-- Motion and hysteresis policy.
-- Accessibility mechanisms.
-- Rendering and input devices.
+This is where knowledge meets lived time: what is active, paused, completed, interrupted, or becoming relevant now.
 
-Providers do not control arbitrary pixels or inject executable interface code. The host does not invent domain mutations or bypass provider authorization.
+### Device observation and action
 
-### Device capabilities and adapters
+Device adapters give USERCOOP bounded access to the device it inhabits. They may observe files, processes, settings, notifications, hardware state, and operating-system events. They translate those observations into knowledge and expose authorized local actions.
 
-USERCOOP does not need to absorb or reimplement every application and service on a device. It discovers or is connected to capabilities already exposed by the operating system and installed applications, then makes those capabilities available through its common activity and interaction model.
+Adapters provide facts and actions, not alternative interfaces. They do not control USERCOOP's vocabulary, activities, typography, spaces, or camera.
 
-For example:
+### Applications and command execution
 
-- If the device has a notification system, USERCOOP may receive or publish notifications through it and present them according to its attention and composition rules.
-- If the device provides a way to compose mail, USERCOOP may launch that composition capability with relevant fields or context already supplied.
-- If the operating system can browse or open files, launch applications, search, share content, or expose settings, adapters may represent those operations as semantic activities and actions.
-- When an operation is better or more safely completed by a native application, USERCOOP may initiate it and hand control to that application rather than reproducing its complete interface.
+USERCOOP can know about and operate applications as objects on the device. It may launch, focus, or stop an application and, where the operating system permits it, invoke one with explicit arguments or a local platform hook.
 
-The responsibility boundary is:
+An advanced procedure may eventually invoke a complete Bash or PowerShell command line. On Android, it may use an available intent or another local operating-system facility. These are powerful device actions, not the organizing purpose of USERCOOP.
 
-- USERCOOP owns the interaction model: activities, contextual language, intention, attention, semantic presentation, and transitions.
-- The device and its applications own the underlying capabilities and domain behavior.
-- Adapters translate between the two.
-- Operating-system and application permissions remain authoritative.
+Execution remains explicit, inspectable, and authorized. Processes, output, failures, and device changes return as knowledge and events. External applications do not become the source of USERCOOP's semantic model.
 
-This allows USERCOOP to change how a device is used without requiring it to replace the device's operating system, notification infrastructure, applications, or services.
+### Operating-system authority
 
-### Rendering hosts
+The operating system remains authoritative over files, processes, hardware, permissions, application sandboxing, and protected actions. USERCOOP does not bypass that authority.
 
-The semantic runtime and provider protocol must not depend on one renderer.
+Knowing that an action is appropriate is distinct from having permission to perform it. A derived action still requires an authorized device capability and, when appropriate, explicit confirmation.
 
-Possible hosts include:
+### Godot application boundary
 
-- Godot, especially for spatial applications and the initial USERCOOP implementation.
-- A browser, especially for document-rich applications and broad portability.
-- A native desktop host.
-- A future shell or compositor.
+Godot is the chosen application environment, not a temporary renderer for a generic host. Its update loop, input system, 2D controls, 3D world, camera, animation, and temporal behavior are part of USERCOOP.
 
-Godot may be the first implementation without becoming part of the protocol.
+The semantic kernel remains separate from Godot presentation objects for clarity and testing. That separation is not a promise to reproduce USERCOOP in unrelated rendering technologies.
 
-## Beyond applications and windows
+## Personal-device targets
 
-The system may ultimately serve as an activity-oriented shell or semantic environment.
+Computers, smartphones, and tablets are natural targets for USERCOOP. The knowledge model and session concept remain coherent across them; device capabilities and input methods differ.
 
-Traditional graphical systems assign applications rectangles and ask the user to preserve context by arranging them. Traditional terminals combine commands and results into one stream. This system asks providers for semantic activities, then composes the computer around the user's current intention.
+Smartphones and tablets deserve particular emphasis:
 
-For example:
+- They are personal devices carried through daily life, making the session a natural point of contact with lived time.
+- Their conventional systems already expose activities, notifications, intents, permissions, sensors, and local hooks.
+- Limited screen area increases the value of automatic composition, short lines, semantic reduction, and overview through camera distance.
+- Application sandboxes make capability boundaries explicit.
+
+USERCOOP remains offline on every target. A cellular or Wi-Fi connection does not grant it external network access. Platform integration remains local to the same physical device.
+
+Keyboard interaction remains central when a physical keyboard is present. Touch and the on-screen keyboard are complete interaction paths, not reduced substitutes. Large monospaced input is especially valuable for users who simply want to type letters and see that the device is listening.
+
+## Implementation
+
+The first implementation is a Godot 4.7 .NET application. It should grow through working software rather than speculative framework building.
+
+### Initial application structure
+
+The root scene uses a plain `Node` because USERCOOP is neither fundamentally 2D nor 3D:
 
 ```text
-Email
-└── Search
-    └── Conversation with Alice
-        └── Compose reply
+Usercoop                         Node
+├── Knowledge                    Node
+├── Session                      Node
+├── Inference                    Node
+├── SpatialWorld                 Node3D
+│   ├── CameraRig                Node3D
+│   │   └── Camera               Camera3D
+│   └── Environment              WorldEnvironment
+└── Interface                    CanvasLayer
+    └── Spaces                   Control
 ```
 
-or:
+The root coordinates lifecycle. Knowledge, session, and inference are sibling runtime services. SpatialWorld and Interface are sibling presentations of their state.
+
+### Semantic data is not the scene tree
+
+The scene tree represents the running application, not every fact in the knowledge base. Facts, entities, relationships, rules, and derivations are ordinary semantic data rather than one Godot node per item.
+
+The semantic kernel should begin with plain C# types carrying stable identities and explicit value semantics. Likely primitives include:
 
 ```text
-Project
-└── Diagnose failing test
-    ├── relevant source
-    ├── failure event
-    ├── recent changes
-    └── corrective actions
+EntityId
+KnowledgeValue
+Fact
+Relation
+Rule
+Query
+Derivation
+Provenance
+KnowledgeEvent
 ```
 
-These activities may cross conventional application boundaries. Their unity comes from the user's purpose, not from process ownership or a window frame.
+Godot nodes own services and connect them to the engine. Godot resources may hold authored vocabulary, schemas, themes, and test data, but they do not define the runtime knowledge model.
 
-Replacing a mature desktop environment is not an initial implementation requirement. The immediate goal is to prove that activity, contextual language, and automatic semantic composition form a useful third model of interaction.
+### Incremental inference
+
+Inference develops over time. It must not freeze Godot while privately calculating a finished answer.
+
+The inference scheduler advances a bounded number of deterministic logical operations, emits ordered events, and yields. Godot continues to render, accept input, reveal text, move the camera, and present partial results.
+
+```text
+question or event
+    → match facts
+    → activate rules
+    → open and reject branches
+    → derive knowledge
+    → stabilize results
+```
+
+The complete inference trace is semantic data. Presentation may show a rapid selection of genuine steps in very small monospaced text. This visible machinery is never fabricated activity. When brought into focus, the trace can receive an ordinary readable representation.
+
+Logical progress and visual cadence remain separate. The initial work budget should be measured in logical operations rather than frame duration so frame rate cannot change semantic results. Worker threads may come later if measurements justify them; cooperative scheduling is the simpler starting point.
+
+Provisional results remain distinct from settled knowledge. Cancellation, inspection, and continued interaction are normal parts of an inference process.
+
+### Persistence
+
+Knowledge, rules, provenance, sessions, and histories persist locally. Storage must be versioned, recoverable, and able to represent changes without discarding their origin.
+
+The first implementation places persistence behind a small interface. A simple local format is enough at first. A local database may replace it later if querying, transactionality, or scale requires one. Persistence never introduces external synchronization or network dependence.
+
+### Initial implementation direction
+
+The first working path is deliberately narrow:
+
+1. Establish the root services and 2D/3D rendering layers.
+2. Render the current typed-line information item with the intended typography.
+3. Add deterministic token recognition and uppercase/lowercase feedback.
+4. Introduce minimal knowledge identities, facts, and events.
+5. Represent the current session and one developing activity.
+6. Advance a small inference process incrementally and show its genuine trace.
+7. Project an invisible 3D information rectangle into a native 2D control.
+8. Add one bounded local device domain, such as files, after the semantic path works end to end.
+
+The aim is not to imitate a desktop or complete an expert-system framework before anything is visible. It is to establish one honest path from user letters, through semantic recognition and inference, into knowledge, space, motion, and persistent session history.
