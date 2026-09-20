@@ -97,86 +97,62 @@ The user can state facts, retrieve knowledge, define concepts, establish rules, 
 
 An immediate instruction, a reusable definition, a query, and a rule for future action all operate on the same semantic world. They need not compress their whole interaction into one line. Context can be established first and then receive the kind of expression it expects:
 
-```C
-//usr:
+```
+usr:    NEW ENTRY
+        CATEGORY PEOPLE
+        FACTS
+        ALICE WORKS ON orion
+        PAUL TOO
 
-    NEW ENTRY
-    CATEGORY PEOPLE
-    FACTS
-    ALICE WORKS ON orion
-    PAUL TOO
+sys:    2 FACTS SAVED
+        WHAT IS ORION
 
-//sys:
+usr:    ORION IS
+        CATEGORY PROJECTS
+        NEW PROJECT
 
-    2 FACTS SAVED
-    WHAT IS ORION
+sys:    PROJECT ORION SAVED
 
-//usr:
+usr:    TODO THIS WEEK
+        DEFINE ORION
+        IMPORTANCE HIGH
 
-    ORION IS
-    CATEGORY PROJECTS
-    NEW PROJECT
-
-//sys:
-
-    PROJECT ORION SAVED
-
-//usr:
-
-    TODO THIS WEEK
-    DEFINE ORION
-    IMPORTANCE HIGH
-
-//sys:
-
-    1 TASK SAVED
+sys:    1 TASK SAVED
 ```
 
 Then later:
 
-```C
-//usr:
+```
+usr:    REQUEST
+        WHO WORKS ON ORION
 
-    REQUEST
-    WHO WORKS ON ORION
-
-//sys:
-
-    CATEGORY PROJECTS
-    ALICE
-    PAUL
-    TOTAL 2 PEOPLE WORK ON ORION
+sys:    CATEGORY PROJECTS
+        ALICE
+        PAUL
+        TOTAL 2 PEOPLE WORK ON ORION
 ```
 
 Defining a deduction:
 
-```C
-//usr:
+```
+usr:    NEW ENTRY
+        CONCEPT PROJECT
+        DEDUCTIONS
+        PROJECT p IS ACTIVE PROJECT
+        IF NOT p HAS COMPLETION DATE
 
-    NEW ENTRY
-    CONCEPT PROJECT
-    DEDUCTIONS
-    PROJECT p IS ACTIVE PROJECT
-    IF NOT p HAS COMPLETION DATE
-
-//sys:
-
-    1 DEDUCTION SAVED
+sys:    1 DEDUCTION SAVED
 ```
 
 Creating a behavior:
 
-```C
-//usr:
+```
+usr:    NEW ENTRY
+        PRODUCTIONS
+        WHEN PROJECT p IS COMPLETE
+        THEN ARCHIVE WORKING FILES OF p
 
-    NEW ENTRY
-    PRODUCTIONS
-    WHEN PROJECT p IS COMPLETE
-    THEN ARCHIVE WORKING FILES OF p
-
-//sys:
-
-    1 PRODUCTION SAVED
+sys:    1 PRODUCTION SAVED
 ```
 
 These examples are scenes showing what it's like to work with USERCOOP. The language grammar and vocabulary are fully customizable, like everything else in the system.
