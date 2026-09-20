@@ -3,6 +3,11 @@
 ## Contents
 
 - [Purpose](#purpose)
+- [A personal programmable expert system](#a-personal-programmable-expert-system)
+  - [Knowledge and programming](#knowledge-and-programming)
+  - [The device as a known world](#the-device-as-a-known-world)
+  - [The session as point of contact](#the-session-as-point-of-contact)
+  - [Cooperation in lived time](#cooperation-in-lived-time)
 - [Core proposition](#core-proposition)
 - [Design principles](#design-principles)
 - [Offline by construction](#offline-by-construction)
@@ -30,6 +35,13 @@
   - [Content belongs to the provider](#content-belongs-to-the-provider)
   - [Presentation belongs to the host](#presentation-belongs-to-the-host)
   - [Multiple representations](#multiple-representations)
+- [Typography](#typography)
+  - [Font system](#font-system)
+  - [Monospace scales](#monospace-scales)
+  - [Case as parser feedback](#case-as-parser-feedback)
+  - [Text arrives through time](#text-arrives-through-time)
+  - [Text without visible containers](#text-without-visible-containers)
+  - [Writing discipline](#writing-discipline)
 - [Presentation preferences](#presentation-preferences)
   - [Granularity](#granularity)
   - [Occupancy](#occupancy)
@@ -60,7 +72,6 @@
   - [Device capabilities and adapters](#device-capabilities-and-adapters)
   - [Rendering hosts](#rendering-hosts)
 - [Beyond applications and windows](#beyond-applications-and-windows)
-- [The Power as the first adapter](#the-power-as-the-first-adapter)
 - [Research questions](#research-questions)
 
 ## Purpose
@@ -72,6 +83,94 @@ The intended end product is a Godot application that provides a calm, quiet, and
 USERCOOP acts as a global interaction identity for the device. Here, identity refers to the coherent way the device presents itself and responds to its user, not to the identity of the user. By running USERCOOP, the device acquires a consistent activity model, command language, presentation logic, and interaction character across the capabilities it makes available.
 
 The project is primarily about managing and operating the device. Access to services may be useful where it supports that purpose, but user accounts, personal identity, and service aggregation are not its organizing concern.
+
+## A personal programmable expert system
+
+USERCOOP is an offline, personal, programmable expert system. It lets the user build, examine, extend, and apply knowledge about a locally defined world, and it can operate the device as part of that world.
+
+It is not primarily an application launcher, a conversational assistant, or a front end that delegates meaningful work to online services or specialized application integrations. It is itself the persistent knowledge and action system with which the user cooperates.
+
+"Personal" means that its concepts, vocabulary, classifications, rules, procedures, and stored knowledge belong to the user and remain on the device. It does not refer to an online identity, behavioral profile, or service account.
+
+### Knowledge and programming
+
+USERCOOP may know and manage:
+
+- Objects and stable identities.
+- Types, categories, properties, and values.
+- Relationships among objects.
+- Events and changes.
+- Collections and selections.
+- Conditions, constraints, and rules.
+- Procedures and available actions.
+- Temporal facts and histories.
+- Sources, provenance, and derivations.
+- Conflicts, failures, and information that is no longer current.
+
+The user can state facts, retrieve knowledge, define concepts, establish rules, and create procedures through the same deterministic language used to operate the system. Programming USERCOOP means teaching it durable vocabulary and behavior, not crossing into a separate conventional programming environment.
+
+An immediate instruction, a reusable definition, a query, and a rule for future action all operate on the same semantic world:
+
+```text
+ALICE WORKS ON ORION
+SHOW PEOPLE WORKING ON ORION
+AN ACTIVE PROJECT IS A PROJECT WITH NO COMPLETION DATE
+WHEN A PROJECT IS COMPLETED ARCHIVE ITS WORKING FILES
+```
+
+These examples indicate functional categories rather than fixing the final syntax.
+
+USERCOOP distinguishes knowledge explicitly stated by the user, observed from the device, derived through rules, and produced by actions. A derivation follows inspectable deterministic rules. Ambiguity, contradiction, and failure become information items rather than occasions for the system to guess.
+
+Something may remain known without currently being shown. The relationship is:
+
+```text
+knowledge item
+    ↓ represented for the current context as
+information item
+    ↓ presented through
+space
+```
+
+### The device as a known world
+
+The device is where USERCOOP runs, one of the worlds it knows about, and an environment in which it can act. Files, folders, applications, processes, settings, notifications, hardware state, typed lines, and operation results can all become objects, facts, events, or actions within the knowledge base.
+
+Device management is therefore an expert domain of USERCOOP rather than a collection of unrelated utilities. Device facts can participate in queries, rules, and procedures just like user-defined knowledge:
+
+```text
+REPORT.PDF IS IN PROJECT ORION
+EDITOR IS RUNNING
+BATTERY LEVEL IS 18 PERCENT
+WHEN BACKUP IS CONNECTED SHOW UNARCHIVED PROJECTS
+```
+
+Applications may be found, launched, focused, or stopped as objects and capabilities of the device. They are not the semantic foundation of USERCOOP and do not replace its knowledge model with their own interaction systems.
+
+### The session as point of contact
+
+The current session is itself a perdurant: something that persists and develops through time. It exists both as an object known to USERCOOP and as a real interval in the user's life. It is the point of contact between the system's semantic world and the temporality the user is actually living and working through.
+
+A session is not merely the duration for which an executable remains open, a connection, or a container for transient interface state. It has a beginning, an evolving present, accumulated events and activities, interruptions, resumptions, and an eventual ending. It may be part of a longer undertaking while also containing shorter activities of its own.
+
+Within the system, the session can be known through its current activities, ongoing work, completed steps, elapsed time, relevant objects, commitments, events, and changes of direction. Within the user's life, it is the actual period in which attention, effort, choice, and progress occur. USERCOOP's cooperation happens where those two descriptions meet.
+
+The session is therefore the current focal perdurant around which the active knowledge display, activity stack, ongoing-stuff list, attention model, and temporal rules are composed. Activities do not float in an abstract interface; they occur during this lived session and contribute to its development.
+
+### Cooperation in lived time
+
+USERCOOP is expected to cooperate with the user in the temporality of the current session. This includes, without reducing the system to a productivity application:
+
+- Task management: knowing what is intended, active, paused, completed, blocked, or newly relevant.
+- Work-time management: relating activities to available time, duration, sequence, interruption, resumption, and stopping points.
+- Personal-growth management: maintaining locally defined goals, practices, learning, reflection, and progress across sessions.
+- Context preservation: keeping paused work developed and resumable rather than forcing the user to reconstruct it mentally.
+- Temporal attention: bringing forward knowledge when it becomes relevant to the current point in an undertaking.
+- Session reflection: making what happened, changed, or remains unfinished available as knowledge rather than as an automatically generated judgment.
+
+These are not isolated modules placed beside the knowledge base. Tasks, time, growth, and sessions are themselves knowledge domains expressed through the same objects, relationships, rules, events, histories, and activities as the rest of USERCOOP.
+
+The system does not need to infer a hidden life plan or decide what personal growth should mean. The user defines the relevant concepts, commitments, measures, and rules. USERCOOP contributes memory, structure, derivation, temporal awareness, presentation, and action within those explicit terms.
 
 ## Core proposition
 
@@ -106,6 +205,7 @@ The result is neither a conventional graphical desktop nor a conventional termin
 8. **Keep content semantic.** Applications describe meaning and available action. The host owns presentation.
 9. **Retain full mouse operation.** Keyboard interaction is primary, not exclusive.
 10. **Remain offline by construction.** USERCOOP must be programmatically unable to reach external networks. Its operation must never depend on Internet access or a remote service, and this boundary has no protocol-specific exception.
+11. **Reward attention without demanding it.** A refinement should be perceptible to someone who attends to it while remaining unobtrusive to someone who does not. USERCOOP favors effects that can be noticed without insisting on being noticed.
 
 ## Offline by construction
 
@@ -256,9 +356,14 @@ Entering an activity narrows the language. Filling an argument narrows it again.
 
 ### Case-shifting parser feedback
 
-As each letter is typed, a word that may still complete into a keyword is displayed in uppercase; otherwise it is lowercase.
+The ordinary appearance of user input is uppercase. In the large majority of composition, letters appear and remain uppercase as the instruction is recognized.
 
-The display updates retroactively. If later characters prove that an uppercase prefix can no longer form a keyword, the earlier letters fall back to lowercase immediately. The space showing the line being typed therefore reflects whether the parser still recognizes a possible instruction.
+Lowercase is exceptional and carries specific parser feedback:
+
+- A value recognized as a variable appears in lowercase, confirming that it is being interpreted as a variable rather than as command vocabulary.
+- A sequence that no longer matches the language appears in lowercase, signaling a likely typo or other failure of recognition.
+
+The display updates retroactively as understanding changes. The user can therefore see recognition directly in the letters without needing an additional icon, underline, or diagnostic message.
 
 ### Provisional cognitive context
 
@@ -367,6 +472,80 @@ An information item may support several semantic representations rather than arb
 | Detailed | Full inspection or active manipulation |
 
 These representations concern granularity. They do not determine how many other information items may simultaneously be given space.
+
+## Typography
+
+Text is the principal kind of perceptible information exchanged between USERCOOP and the user. Typography is therefore part of the interaction model rather than decoration applied after the interface has been designed. It must make the system cognitively affordable, visibly responsive, and capable of exposing technical depth without allowing that depth to dominate.
+
+The goal is not to select fonts that call attention to their own beauty. The fonts should stay out of the way of USERCOOP being both beautiful and useful.
+
+### Font system
+
+USERCOOP uses two principal font families:
+
+1. A proportional reading family that is comfortable for ordinary information and supports variable weight.
+2. A monospaced family for user input, formatted content, and technical reference information, preferably also supporting variable weight.
+
+Headings use the same proportional family as ordinary reading text. They are larger but set at a lighter stroke weight, so the increase in size does not produce a correspondingly heavy visual mass. This refers to the thickness of the strokes that form each letter, not to preserving the horizontal width of the complete line.
+
+The small number of families gives USERCOOP one coherent typographic identity across applications and information sources. Changes of size, weight, spacing, and alignment provide hierarchy without making each kind of information appear to come from a different interface.
+
+Font selection must prioritize:
+
+- Comfortable sustained reading at ordinary sizes.
+- Clear distinction among easily confused characters.
+- Strong uppercase and lowercase forms.
+- Useful punctuation, mathematical symbols, and numerals.
+- Reliable rendering at both very large and very small sizes.
+- Broad language coverage and deliberately chosen offline fallbacks.
+- Stable character and line metrics across the weights USERCOOP uses.
+- Licensing that permits the complete font set to be bundled and used offline.
+
+### Monospace scales
+
+The monospaced family has three characteristic scales:
+
+- **Large:** user input. The line being typed is roughly twice the ordinary text size. It is the clearest and most immediate evidence that the device is receiving the user's intention.
+- **Normal:** formatted or structurally literal content for which fixed character alignment is useful.
+- **Very small:** quasi-irrelevant or technical reference information such as object identifiers, line numbers, software versions, and internal correlations.
+
+The very small scale makes the machinery visible without making it central. Experienced users may read and use it. Other users may perceive it as quiet evidence that USERCOOP is listening, interpreting, and doing real work. Their own input remains large, meaningful information remains normally sized, and supporting machinery forms subtle visual texture around it.
+
+Essential information must not depend on the very small scale. When technical information becomes relevant or is explicitly requested, USERCOOP gives it an ordinary readable representation.
+
+The use of large monospaced uppercase input deliberately retains the directness associated with fictional and historical command interfaces: a person sits at a computer, states what they want in simple letters, and the device responds. This is not retro styling for nostalgia. It is a cognitively affordable interaction in which users do not need mastery of menus, keyboard punctuation, underscores, or elaborate syntax merely to address the device.
+
+### Case as parser feedback
+
+Uppercase is the normal visual state of user input. Lowercase is reserved for the two exceptional semantic conditions defined by live parsing: recognized variables and text that is not currently recognized, such as a developing typo.
+
+Case therefore communicates understanding within the text itself. A change to lowercase is visible confirmation rather than an added warning ornament. Because uppercase is normal, these exceptions remain clear and uncommon.
+
+### Text arrives through time
+
+Every text appears letter by letter. A complete line is never materialized instantaneously when USERCOOP first presents it in a space.
+
+The reveal is quick and does not turn an ordinary line into a long-running typewriter performance. Its purpose is to give textual appearance a perceptible duration: the system is listening, composing, and cooperating rather than dropping finished rectangles of content onto the screen. The effect should be apparent to someone attending to it while remaining natural and unobtrusive to someone who is not.
+
+User input naturally appears at the pace of typing. System-generated text uses a brief controlled cadence appropriate to the current sport-to-zen pace and interaction cadence. Urgency, readability, and accessibility may accelerate the reveal, but its ordinary character remains progressive rather than instantaneous.
+
+Letter-by-letter revelation belongs to the presentation of an information item, not to its semantic storage. USERCOOP may already know the complete text while its current space reveals that text through time.
+
+### Text without visible containers
+
+Information spaces do not normally draw rectangular containers around text. Internally, a 2D control still has bounds for layout, projection, focus, and interaction, but those bounds do not need to become a visible card or panel.
+
+Text primarily needs an anchor, a vertical alignment line, a readable measure, and a meaningful relationship to nearby information. It may be left-aligned, centered, or right-aligned according to its role in the spatial grammar. Empty space, alignment, typography, and movement establish grouping before borders or backgrounds are considered.
+
+Camera distance changes the room available to an information representation, not the basic legibility of its font. When less room is available, the item says less: it moves from detailed to standard to overview representation rather than continuously shrinking its text. The invisible projected rectangle remains useful as layout geometry even when no rectangle is visually drawn.
+
+### Writing discipline
+
+USERCOOP's own text is composed from simple sentences and short lines. When several short statements will communicate something clearly, they are preferred to a dense paragraph or a long line forced into an arbitrary container.
+
+Providers should supply semantic facts, identity, state, relationships, and actions wherever possible. USERCOOP remains responsible for expressing ordinary interface information in its coherent voice. Intrinsic content such as a message, document, or source file remains the content itself and may require longer-form reading.
+
+Icons and emoji are not part of USERCOOP's interaction vocabulary. The system relies on letters, words, case, weight, scale, alignment, space, and movement rather than asking the user to learn a parallel symbolic language.
 
 ## Presentation preferences
 
@@ -609,11 +788,13 @@ These roles make rotation an expression of attention rather than travel:
 - **Contextual glance:** look toward related context from the current position without leaving or changing the current activity.
 - **Settled orientation:** align the final gaze with the composition once translation and reorganization have settled.
 
-Rotation and translation operate at different characteristic speeds. Rotation is normally faster: attention can turn toward something promptly, as a person turns their head toward a point of interest. It is not instantaneous and retains eased acceleration, deceleration, and a small sense of inertia so that orientation remains perceptible rather than snapping.
+Rotation and translation begin together. Both use eased acceleration and deceleration, or an equivalent interpolation, so that neither snaps into motion. They differ primarily in how quickly they settle.
 
-Translation is slower and has the felt pace of walking to another position. It gives the user time to perceive the path between viewpoints and understand how the new context relates spatially to the old one. During combined movement, rotation will therefore usually approach the new subject before translation reaches its destination. The gaze leads; the viewpoint follows.
+As an initial motion envelope, the camera may align with and lock its gaze on the target approximately `0.25` to `0.5` seconds after movement begins, while translation reaches the new position approximately `1` to `2` seconds after the same start. Rotation therefore feels like turning the head while translation feels like walking. Once gaze lock is reached, the camera continues looking at the target while its position completes the journey. The gaze leads; the viewpoint follows.
 
-These are perceptual motion scales rather than a demand for literal physical simulation. Exact speed, acceleration, and duration remain subject to distance, urgency, readability, and reduced-motion accessibility settings, but the relative relationship should remain recognizable: turning is quicker than traveling.
+These timings are rough perceptual targets rather than fixed constants or a demand for literal physical simulation. Exact speed, acceleration, and duration remain subject to distance, urgency, readability, the sport-to-zen pace, and reduced-motion accessibility settings. The recognizable relationship is more important than the numbers: turning and walking begin together, gaze settles first, and position follows.
+
+The difference should be only as visible as necessary to make the motion feel coherent. Someone who knows to observe the head-turn and walk relationship should be able to see it; someone who does not should simply experience one calm, natural camera movement. This is a direct application of the broader principle that a refinement may reward attention without demanding it.
 
 Camera motions therefore form a restrained vocabulary:
 
@@ -735,7 +916,7 @@ The semantic runtime and provider protocol must not depend on one renderer.
 
 Possible hosts include:
 
-- Godot, especially for spatial applications and The Power.
+- Godot, especially for spatial applications and the initial USERCOOP implementation.
 - A browser, especially for document-rich applications and broad portability.
 - A native desktop host.
 - A future shell or compositor.
@@ -771,45 +952,3 @@ Project
 These activities may cross conventional application boundaries. Their unity comes from the user's purpose, not from process ownership or a window frame.
 
 Replacing a mature desktop environment is not an initial implementation requirement. The immediate goal is to prove that activity, contextual language, and automatic semantic composition form a useful third model of interaction.
-
-## The Power as the first adapter
-
-The Power is an unusually strong first application because it contains:
-
-- A closed but rich object world.
-- Spatial focus and camera movement.
-- Long-lived and transient information.
-- Delayed consequences.
-- Simultaneous important events.
-- Deep compositional commands.
-- Real conflicts between overview and detail.
-- Real conflicts between calm presentation and temporary occupancy.
-
-The adapter provides stones, clans, cells, pledge trees, game actions, sensing, and authorization. The generic runtime provides activities, parsing, attention, composition, history, presentation preferences, and rendering policy.
-
-Examples specific to The Power include:
-
-- Selecting, viewing, and highlighting any legitimately perceived stone.
-- Permitting mutations only for stones the player controls.
-- Panning and zooming toward a stone resolved inside an unfinished command.
-- Previewing a queued move during composition while leaving the board unchanged until the tick.
-- Raising criticality as an event-bound opportunity approaches tick resolution.
-- Publishing an aggregate session-duration baseline for session-bound estimates while keeping layout decisions within USERCOOP.
-
-At least one small non-game provider, such as notes or tasks, should also be built early. This tests whether the runtime is genuinely general rather than merely game code with abstract names.
-
-## Research questions
-
-1. Can users learn a large system through contextual vocabulary without memorizing a global command language?
-2. How much provisional screen movement helps comprehension before it becomes distracting?
-3. Which parser states justify moving spatial focus, and which should only reveal possibilities?
-4. How should a provisional context unwind when the user backspaces into ambiguity?
-5. How strong must hysteresis be to stabilize ambient information without making the interface feel unresponsive?
-6. Can granularity and occupancy be expressed as understandable preferences without exposing implementation complexity?
-7. How should explicit requests, semantic minimums, criticality, and preferences be combined predictably?
-8. What is the smallest information-item schema that remains expressive across unrelated providers?
-9. Can application providers supply vocabulary and information safely without gaining control of USERCOOP's presentation?
-10. Does the model remain usable without a spatial view, as in notes, tasks, mail, or programming?
-11. Can the same semantic runtime support Godot, browser, and native hosts without collapsing to their lowest common denominator?
-12. At what point does an activity-oriented environment become capable enough to replace part of a conventional desktop shell?
-13. What technical boundary can make external network access impossible while preserving safe same-device communication with local applications and operating-system facilities?
