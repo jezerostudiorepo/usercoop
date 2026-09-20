@@ -33,6 +33,7 @@
 - [Presentation preferences](#presentation-preferences)
   - [Granularity](#granularity)
   - [Occupancy](#occupancy)
+  - [Sport-to-zen pace](#sport-to-zen-pace)
   - [Preferences are equilibria](#preferences-are-equilibria)
 - [Automatic composition and attention](#automatic-composition-and-attention)
   - [Attention from command traffic](#attention-from-command-traffic)
@@ -392,6 +393,21 @@ The two axes form four legitimate regions:
 | **Sparse** | Calm global picture | One subject examined deeply |
 | **Rich** | Many compact summaries | Many detailed subjects at once |
 
+### Sport-to-zen pace
+
+A gradual **sport-to-zen** preference describes the user's resting preference for the pace and motion character of the interface.
+
+- **Sport:** quicker acceleration, faster settling, shorter pauses, and a more immediate feeling of response.
+- **Zen:** gentler acceleration, longer settling, more breathing room, and a more contemplative feeling of response.
+
+The scale is continuous rather than a choice between two modes. It governs the motion and temporal presentation of the same semantic behavior; it does not make commands less deterministic, delay essential feedback, or change what the user is authorized to do.
+
+The selected value is a baseline. USERCOOP may move temporarily around it to match the user's current **interaction cadence**: the general speed at which the user is presently typing, choosing, and advancing through the activity. Typing speed, intervals between actions, correction cadence, and rate of progression provide immediate local indications of that pace.
+
+A rapid, sustained interaction cadence may pull presentation toward the sport side, as when the user is working in a hurry. Longer intervals and an unhurried cadence may pull it toward the zen side, as during a relaxed or exploratory session. USERCOOP responds to the demonstrated pace itself and does not need to infer why the user has adopted it.
+
+Adaptation must be gradual, bounded, and resistant to oscillation. A brief burst of typing or a single pause must not cause a conspicuous change of character. Cadence is estimated entirely on the device from interaction timing already available to USERCOOP. The user may constrain or disable adaptation while retaining a fixed sport-to-zen preference.
+
 ### Preferences are equilibria
 
 Preferences describe where the display rests when no stronger requirement exists. They are not hard limits.
@@ -401,9 +417,11 @@ Precedence is:
 1. **Explicit request.** If the user asks for detail, show detail.
 2. **Semantic requirement.** If information cannot be understood safely in a compact form, use the required representation.
 3. **Simultaneous importance and criticality.** If several matters genuinely require attention, temporarily increase occupancy.
-4. **Standing preference.** When the system has a choice, return toward the user's preferred granularity and occupancy.
+4. **Standing preference.** When the system has a choice, return toward the user's preferred granularity, occupancy, and sport-to-zen pace.
 
 A sparse preference means “when possible, show less,” not “conceal simultaneous important information.” An overview preference means “begin with summaries,” not “withhold detail that was requested.”
+
+The sport-to-zen preference is likewise an equilibrium rather than a fixed animation multiplier. Current interaction cadence, semantic urgency, and accessibility requirements may shift motion away from that equilibrium. When those pressures end, the interface settles back toward the chosen baseline.
 
 ## Automatic composition and attention
 
@@ -514,7 +532,7 @@ The user's basic orientation is that of a person seated at a keyboard and facing
 
 The wall may develop in different directions when the activity requires it, then retract when work completes. It does not need to preserve a permanent map of every previous activity. Later activity may develop a different structure from the same conceptual center.
 
-The camera follows this development while generally preserving the stable experience of looking forward. It may translate, approach, withdraw, pan, and reframe. Rotation remains restrained and meaningful; the design does not require the camera to orbit continuously or turn the user around without semantic cause.
+The camera follows this development while generally preserving the stable experience of facing the working wall. Translation changes the user's point of view; rotation changes the direction of gaze from that point of view. Both are meaningful, but the design does not require continuous orbiting or disorienting changes of orientation.
 
 ### Directional grammar
 
@@ -577,19 +595,36 @@ The vertical ordering of ongoing activities does not imply that one follows anot
 
 Camera movement is the primary intuitive channel through which USERCOOP communicates changes in activity context. Layout and camera are composed together: relevant information develops into an appropriate position, and the camera moves so that the current context is correctly presented in front of the user.
 
-Provisional composition happens where the camera already is. While the user types an unfinished instruction, information may appear, recede, reorder, or receive emphasis around the current place. Local pan, approach, withdrawal, or reframing may clarify the parser's developing understanding, but provisional interpretation does not pretend that the user has entered another activity location.
+Provisional composition happens where the camera already is. While the user types an unfinished instruction, information may appear, recede, reorder, or receive emphasis around the current place. Local rotation, approach, withdrawal, or reframing may clarify the parser's developing understanding, but provisional interpretation does not pretend that the user has entered another activity location.
 
 A committed activity transition is different: the camera literally travels to another place in the spatial composition. Entering a deeper activity develops a destination and moves the camera to it. Completing or leaving that activity retracts its temporary development while the camera returns toward the surviving parent context. Pausing an activity and switching to another moves the camera between their developed line schemas without retracting either one.
+
+Translation and rotation need not wait for one another. Information may appear or disappear faster than the camera can travel to the newly appropriate point of view. In that case the camera first turns its gaze toward the new point of interest while translation is still underway. This is analogous to a person turning their head toward something before or while walking into a better position from which to inspect it. The user can therefore see the relevant subject immediately while the slower movement of viewpoint preserves spatial continuity.
+
+Rotation also permits a contextual glance without leaving the current place. The camera may turn toward a distant but related part of the developed wall—for example, a previous step of the same activity or the parent activity within which the current sub-activity exists. This changes what the user is looking at without changing which activity is current, retracting anything, or committing a transition. When the glance ends, the camera may return its gaze to the current point of work.
+
+These roles make rotation an expression of attention rather than travel:
+
+- **Anticipatory gaze:** turn toward a new point of interest before or during translation to its new point of view.
+- **Contextual glance:** look toward related context from the current position without leaving or changing the current activity.
+- **Settled orientation:** align the final gaze with the composition once translation and reorganization have settled.
+
+Rotation and translation operate at different characteristic speeds. Rotation is normally faster: attention can turn toward something promptly, as a person turns their head toward a point of interest. It is not instantaneous and retains eased acceleration, deceleration, and a small sense of inertia so that orientation remains perceptible rather than snapping.
+
+Translation is slower and has the felt pace of walking to another position. It gives the user time to perceive the path between viewpoints and understand how the new context relates spatially to the old one. During combined movement, rotation will therefore usually approach the new subject before translation reaches its destination. The gaze leads; the viewpoint follows.
+
+These are perceptual motion scales rather than a demand for literal physical simulation. Exact speed, acceleration, and duration remain subject to distance, urgency, readability, and reduced-motion accessibility settings, but the relative relationship should remain recognizable: turning is quicker than traveling.
 
 Camera motions therefore form a restrained vocabulary:
 
 - Local adjustment expresses changing attention within the present activity.
+- Rotation expresses direction of gaze and can redirect attention without changing viewpoint or activity.
 - Sustained spatial travel expresses entry into another activity context.
 - Withdrawal without retraction expresses overview.
 - Withdrawal accompanied by retraction expresses completion, exit, or return to a parent context.
 - Travel between preserved line schemas expresses switching among ongoing activities.
 - Reframing expresses reorganization of the current context.
-- Rotation is reserved for development whose changed direction genuinely carries meaning.
+- Combined rotation and translation let attention arrive before the camera reaches its final point of view.
 
 Movement is not decorative animation added after layout. It preserves continuity and lets the user perceive how the current context grew from the previous one, where attention has moved, and when a temporary branch has ceased to exist.
 
