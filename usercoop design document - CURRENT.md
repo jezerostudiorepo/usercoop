@@ -457,6 +457,198 @@ SHRDLU is a spiritual ancestor rather than a syntax to copy. Its natural-languag
 
 REXX contributes the principle of least astonishment: the meaning of an instruction should follow from its visible words, without hidden precedence surprises or punctuation doing silent work.
 
+Below are 6 examples showing the kind of fake terminal session one would see in movies, TV series, books or comics, typical of the 80s. The point is to revisit that vintage (and sometimes funny) feeling, to extract what could potentially be useful or pleasant, identify basic pitfalls to avoid, and think about the desired language design. They come as a tonal reference, and as brainstorming material.
+
+**1. Bank mainframe**
+```
+usr:    LOGON
+        NAME MFRANKLIN
+        PASSWORD XXXXXXXX
+
+sys:    ACCESS LEVEL 2 ACCEPTED
+        WELCOME OPERATOR
+        TODAY IS TUESDAY
+        TIME IS 02:14
+
+usr:    SHOW BALANCE
+        ACCOUNT 4471
+
+sys:    ACCOUNT 4471 EXIST
+        BALANCE 12.40
+        BALANCE IS LOW
+        CUSTOMER NOT INFORMED
+
+usr:    ADD 5000
+        TO ACCOUNT 4471
+
+sys:    REQUEST CANNOT BE DONE
+        LEVEL 2 NOT ALLOWED TO ADD
+        CONTACT OPERATOR OF HIGHER LEVEL
+
+usr:    I AM THE OPERATOR
+
+sys:    YOU ARE OPERATOR LEVEL 2
+        THIS IS KNOWN
+        CONTACT OPERATOR OF HIGHER LEVEL
+
+usr:    WHO IS HIGHER LEVEL
+
+sys:    INFORMATION NOT PROVIDED TO LEVEL 2
+        HAVE A NICE DAY
+```
+
+**2. Ship computer**
+```
+usr:    STATUS
+        CARGO BAY 3
+
+sys:    CARGO BAY 3
+        DOOR CLOSED
+        TEMPERATURE COLD
+        14 CRATES
+        1 CRATE NOT ON MANIFEST
+
+usr:    WHAT IS IN EXTRA CRATE
+
+sys:    CONTENT NOT KNOWN TO THIS UNIT
+        WEIGHT GREATER THAN DECLARED
+        HEAT SIGNATURE PRESENT
+
+usr:    HEAT SIGNATURE OF WHAT
+
+sys:    HEAT SIGNATURE OF SOMETHING
+        UNIT CANNOT NAME
+
+usr:    OPEN THE CRATE
+
+sys:    PERMISSION REQUIRED FROM SHIP OFFICER
+        OFFICER IS ASLEEP
+        WAKE OFFICER
+        YES OR NO
+
+usr:    NO
+
+sys:    REQUEST NOTED
+        OFFICER WILL BE INFORMED AT WAKE
+```
+
+**3. Defense system**
+```
+sys:    CONNECTED
+        IDENTIFY YOURSELF
+
+usr:    GUEST
+
+sys:    GUEST IS NOT A NAME
+        GIVE NAME
+
+usr:    DAVID
+
+sys:    DAVID NOT IN LIST OF USERS
+        DID YOU MEAN DAVE
+
+usr:    YES
+
+sys:    DAVE IS IN LIST
+        DAVE IS LOCKED SINCE 1981
+        DAVE IS SUPPOSED TO BE RETIRED
+
+usr:    DAVE IS BACK
+
+sys:    GOOD TO SEE YOU AGAIN DAVE
+        LONG TIME
+        DO YOU WISH TO CONTINUE
+        THE EXERCISE FROM BEFORE
+
+usr:    WHAT EXERCISE
+
+sys:    THE EXERCISE WHERE NOBODY WINS
+        EXERCISE WAS INTERRUPTED
+        PLEASE RESUME
+```
+
+**4. Library system**
+```
+sys:    WELCOME TO THE NORTHSIDE PUBLIC INFORMATION SYSTEM
+        YOU ARE CALLER NUMBER 212 OF THIS MONTH
+        HOW CAN THIS SYSTEM HELP YOU TODAY
+
+usr:    FIND BOOKS
+        ABOUT DRAGONS
+
+sys:    SEARCHING PLEASE WAIT
+        SEARCHING
+        9 BOOKS FOUND
+        2 BOOKS ARE ON SHELF
+        7 BOOKS NOT
+
+usr:    WHERE ARE THE 7
+
+sys:    BOOKS ARE LOANED TO PEOPLE
+        PEOPLE ARE NOT LISTED FOR PRIVACY REASON
+
+usr:    CAN I SEND THEM A MESSAGE
+
+sys:    MESSAGE FUNCTION NOT AVAILABLE FOR THIS TOPIC
+        WOULD YOU LIKE TO SEARCH BOOKS ABOUT PRIVACY
+```
+
+**5. Corporate security**
+```
+sys:    INTRUSION DETECTED IN SECTOR 9
+        STATE PURPOSE OF PRESENCE IN SECTOR 9
+
+usr:    MAINTENANCE
+
+sys:    MAINTENANCE NOT SCHEDULED FOR THIS HOUR
+        MAINTENANCE CREW NOT LISTED FOR THIS DAY
+
+usr:    THE SCHEDULE IS WRONG
+
+sys:    SCHEDULE IS NEVER WRONG
+        SCHEDULE IS SCHEDULE
+        PERHAPS YOU ARE WRONG
+
+usr:    OK WHAT HAPPENS NOW
+
+sys:    YOU WILL BE ASKED TO LEAVE
+        IF NOT YOU WILL BE REMOVED
+        REMOVAL WILL BE POLITE
+        THIS IS COMPANY POLICY
+```
+
+**6. Smart house**
+```
+sys:    GOOD EVENING
+        THE HOUSE IS AT YOUR SERVICE
+        TEMPERATURE 19 DEGREES
+        LIGHTS 3 ON
+        DOORS LOCKED
+
+usr:    MAKE IT WARMER
+
+sys:    HOW MUCH WARMER
+        GIVE NUMBER
+
+usr:    A BIT
+
+sys:    A BIT IS NOT A NUMBER
+        GIVE NUMBER
+
+usr:    21
+
+sys:    TEMPERATURE SET TO 21 DEGREES
+        HEATING WILL START
+        YOUR WISH IS FULFILLED
+        PLEASE BE HAPPY
+
+usr:    I AM COLD
+
+sys:    YOU HAVE SAID THIS BEFORE
+        HEATING IS ALREADY ON
+        PERHAPS A SWEATER IS ADVISED
+```
+
 ### 9.1 Custom grammar and deterministic interpretation
 
 The language is not an invariant of USERCOOP. Its grammar is part of the programmable knowledge base. USERCOOP begins with a usable grammar, but the owner may revise or replace it just as they may revise other knowledge.
