@@ -208,21 +208,20 @@ Device management is therefore an expert domain of USERCOOP rather than a collec
 
 ```
 usr:    NEW ENTRY
-        CATEGORY DEVICE
-        FACTS
-        REPORT.PDF IS IN PROJECT ORION
-        EDITOR IS RUNNING
-        BATTERY LEVEL IS 18 PERCENT
-
-sys:    3 FACTS SAVED
-
-usr:    NEW ENTRY
-        CATEGORY DEVICE
         PRODUCTIONS
         WHEN BACKUP IS CONNECTED
-        THEN SHOW UNARCHIVED PROJECTS
+        THEN SHOW PROJECTS WITH UNARCHIVED FILES
 
 sys:    1 PRODUCTION SAVED
+```
+
+Later, USERCOOP senses the device event and applies the production without requiring the user to report the device state:
+
+```
+sys:    BACKUP CONNECTED
+        PROJECTS WITH UNARCHIVED FILES
+        ORION
+        TOTAL 1
 ```
 
 Applications may be found, launched, focused, or stopped as objects and capabilities of the device. They are not the semantic foundation of USERCOOP and do not replace its knowledge model with their own interaction systems.
