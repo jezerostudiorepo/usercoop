@@ -290,7 +290,7 @@ The result is neither a conventional graphical desktop nor a conventional termin
 10. **Remain offline by construction.** USERCOOP's own runtime must be programmatically unable to initiate or receive communication across an external network, and its operation must never depend on Internet access or a remote service. Section 6 states exactly what this covers.
 11. **Reward attention without demanding it.** A refinement should be perceptible to someone who attends to it while remaining unobtrusive to someone who does not.
 12. **Allow initiative only through capabilities.** USERCOOP may ask, infer, present, and act on its own initiative, but only within user-defined knowledge and device boundaries.
-13. **Let accessibility bound everything else.** Accessibility requirements constrain motion, typography, contrast, timing, and information capacity, and they outrank both aesthetic choices and the user's ordinary presentation preferences.
+13. **Provide accessible defaults without overruling the user.** Accessibility guidance defines sensible default ranges for motion, typography, contrast, timing, and information capacity. The user's explicit choices remain authoritative.
 
 ---
 
@@ -806,15 +806,16 @@ Preferences describe where the display rests when no stronger requirement exists
 
 Precedence, from strongest to weakest:
 
-1. **Accessibility requirement.** Motion, contrast, timing, typography, and capacity constraints bound everything below. They are not overridden by an explicit request for something they forbid; instead, the request is satisfied in a form the constraint permits.
-2. **Explicit request.** If the user asks for detail, show detail.
-3. **Semantic requirement.** If information cannot be understood safely in a compact form, use the required representation.
-4. **Simultaneous importance and criticality.** If several matters genuinely require attention, temporarily increase occupancy, within the capacity limit of section 18.
+1. **Explicit choice.** A deliberate user instruction is authoritative, including a choice outside USERCOOP's accessible default ranges.
+2. **User-selected accessibility setting.** An accessibility profile or constraint is itself a standing user choice. It remains active until the user changes it, and a newer specific instruction may override it.
+3. **Semantic requirement.** If information cannot be understood safely in a compact form, use the required representation unless the user has chosen otherwise.
+4. **Simultaneous importance and criticality.** If several matters genuinely require attention, temporarily increase occupancy within the current display capacity.
 5. **Standing preference.** When the system has a choice, return toward the user's preferred granularity, occupancy, and sport-to-zen pace.
+6. **Accessible default.** Where the user has expressed no preference, use the accessible ranges and alternatives defined in section 18.
 
 A sparse preference means "when possible, show less," not "conceal simultaneous important information." An overview preference means "begin with summaries," not "withhold detail that was requested."
 
-The sport-to-zen preference is likewise an equilibrium rather than a fixed animation multiplier. Current interaction cadence, semantic urgency, and accessibility requirements may shift motion away from that equilibrium. When those pressures end, the interface settles back toward the chosen baseline rather than snapping through every intermediate arrangement.
+The sport-to-zen preference is likewise an equilibrium rather than a fixed animation multiplier. Current interaction cadence, semantic urgency, and user-selected accessibility settings may shift motion away from that equilibrium. When those pressures end, the interface settles back toward the chosen baseline rather than snapping through every intermediate arrangement.
 
 ## 15. Attention and automatic composition
 
@@ -1088,7 +1089,7 @@ Explicit requests and urgent contexts may temporarily force greater detail or oc
 
 Accessibility is specified here as a first-class part of the interaction model, because several of USERCOOP's most distinctive mechanisms (letter-by-letter reveal, case as feedback, camera motion, very small technical text, a 3D scene carrying 2D controls) are exactly the mechanisms that exclude people when they are designed carelessly.
 
-Accessibility requirements bound every other presentation rule, as stated in principle 13 and in the precedence of section 14.4.
+Accessibility provides well-tested defaults, alternative presentation paths, and settings the user may adopt. USERCOOP does not infer that those defaults describe a particular user, and it never gives them precedence over that user's deliberate choice. It may make consequences visible, but it obeys the choice.
 
 ### 18.1 Complete input paths
 
@@ -1096,11 +1097,11 @@ Keyboard interaction is the intended primary mode where a keyboard is present. F
 
 Every semantic action available through the command language must have an accessible direct-manipulation path. Spatial views support ordinary pointing, dragging, panning, and zooming where appropriate. Keyboard focus is always visible when keyboard navigation is active, and focus order follows the spatial grammar: along a line schema left to right, then above and below each step.
 
-### 18.2 Legibility floors
+### 18.2 Default legibility ranges
 
-These are hard minimums, not preferences.
+These are the defaults used when the user has not chosen otherwise. They are starting ranges, not hard limits imposed on an unknown user.
 
-| Property | Requirement |
+| Property | Default |
 |---|---|
 | Body text contrast | At least 4.5:1 against its background, in both themes |
 | Large and very small monospace contrast | At least 4.5:1, with no exemption for the very small scale |
@@ -1108,9 +1109,9 @@ These are hard minimums, not preferences.
 | Minimum rendered text size | No text is rendered below the platform's minimum readable size after camera projection |
 | User text scaling | Honored up to at least 200 percent, with the display budget recomputed rather than the text clipped |
 
-Camera distance reduces what an item says, never how legibly it says it. When projection would push a representation below the minimum size, the item changes representation or leaves the composition. It never shrinks below the floor.
+By default, camera distance reduces what an item says rather than how legibly it says it. When projection would push a representation below the default minimum size, the item changes representation or leaves the composition. A deliberate user setting may choose different behavior.
 
-The guidance to reserve strong contrast for meaningful state changes governs color relationships among quiet elements. It never licenses text below these floors.
+The guidance to reserve strong contrast for meaningful state changes governs color relationships among quiet elements. It does not lower the default text-contrast ranges.
 
 ### 18.3 Motion, timing, and their equivalents
 
@@ -1142,14 +1143,14 @@ Every projected space remains a native 2D `Control` and participates in an expli
 
 ### 18.5 Capacity
 
-Cognitive and perceptual accessibility settings may reduce the maximum number of simultaneous spaces, force overview representations, or disable adaptive pace. These reductions apply to the display budget of section 15.8 and therefore bound rule 4 of the precedence order: simultaneous importance may increase occupancy only up to the capacity the user's settings allow. Above that, USERCOOP enumerates rather than expands.
+Cognitive and perceptual accessibility settings may reduce the maximum number of simultaneous spaces, force overview representations, or disable adaptive pace. These user-selected reductions apply to the display budget of section 15.8. Simultaneous importance may increase occupancy only up to the capacity those settings allow, unless the user explicitly requests otherwise. Above that, USERCOOP enumerates rather than expands.
 
 ## 19. Visual direction
 
 The interface is quiet, calm, and restrained at rest. It should feel like a clear space for thought rather than a spectacle competing for attention.
 
 - Simple forms, generous spacing, and highly legible typography.
-- Soft, neutral colors, with saturated or high-contrast treatments reserved for meaningful state changes, always within the contrast floors of section 18.2.
+- Soft, neutral colors, with saturated or high-contrast treatments reserved for meaningful state changes, within the default contrast ranges of section 18.2.
 - Gentle motion when preserving continuity, directing attention, or confirming action.
 - Rapid motion is permitted when directly caused by active command composition.
 - Visual hierarchy comes from the interaction model itself.
@@ -1335,7 +1336,7 @@ The distinctive claims of this design are testable, and the ones that are not te
 | Deterministic parsing | Golden tests generated from the grammar currently under test, including multiline entries, contextual patterns, synonyms where defined, precedence cases, and reserved-word collisions. |
 | Frame rate cannot change results | The same inference run at different operation budgets and frame rates produces identical derivations in the same order. |
 | Response targets | Measured per keystroke on each device class, reported as a distribution rather than an average. |
-| Accessibility floors | Automated contrast and minimum-size checks over rendered compositions, plus accessibility-tree assertions for every space type. |
+| Accessibility defaults | Automated checks confirm that default contrast, text size, and motion alternatives remain within the ranges of section 18, plus accessibility-tree assertions for every space type. |
 | Composition stability | Replay of recorded entry streams, asserting that background spaces do not oscillate and that minimum display lifetimes hold. |
 | Capability enforcement | Every capability class has a test that an ungranted action fails, is reported, and does not partially execute. |
 
@@ -1351,7 +1352,7 @@ The first working path is deliberately narrow:
 6. Represent the current session and one developing activity.
 7. Advance a small inference process incrementally and show its genuine trace.
 8. Project an invisible 3D information rectangle into a native 2D control.
-9. Put the offline enforcement test and the accessibility floor checks into the build, before there is much to fix.
+9. Put the offline enforcement test and the accessibility-default checks into the build, before there is much to fix.
 10. Add one bounded local device domain, such as files, after the semantic path works end to end.
 
 The aim is not to imitate a desktop or complete an expert-system framework before anything is visible. It is to establish one honest path from user letters, through semantic recognition and inference, into knowledge, space, motion, and persistent session history.
