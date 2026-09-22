@@ -157,7 +157,7 @@ sys:    1 PRODUCTION SAVED
 
 These examples are scenes showing what it's like to work with USERCOOP. The language grammar and vocabulary are fully customizable through their patterns: patterns can be created, changed, retired, and reordered. The underlying multiline, punctuation-free language architecture remains the same.
 
-USERCOOP distinguishes knowledge explicitly stated by the user, observed from the device, derived through rules, and produced by actions. A derivation follows inspectable deterministic rules. Ambiguity, contradiction, and failure become information items rather than occasions for the system to guess. When more than one valid reading remains, USERCOOP exposes the alternatives and asks the user to resolve them.
+USERCOOP distinguishes knowledge explicitly stated by the user, observed from the device, derived through rules, and produced by actions. A derivation follows inspectable deterministic rules. Contradiction, failure, and unresolved semantic reference become information items rather than occasions for the system to guess. Pattern precedence always determines the grammatical reading; when that reading requires one referent and several objects satisfy it, USERCOOP asks the user to resolve the reference.
 
 Something may remain known without currently being shown. The relationship is:
 
@@ -278,7 +278,7 @@ The result is neither a conventional graphical desktop nor a conventional termin
 
 ## 5. Design principles
 
-1. **Never guess.** A multiline resolves deterministically, exposes its remaining ambiguity for the user to resolve, or fails when it has no valid reading. USERCOOP never silently chooses a merely plausible interpretation. Failure generates a semantic event associated with the originating multiline.
+1. **Never guess.** Pattern precedence determines the grammatical reading of a multiline. If the selected pattern requires a semantic reference that does not resolve uniquely, USERCOOP asks; if no pattern applies, it fails. USERCOOP never silently substitutes a merely plausible pattern or referent. Failure generates a semantic event associated with the originating multiline.
 2. **Reveal the current language.** The system shows what is valid in the present context instead of requiring memorization of a global command set.
 3. **React before submission.** A multiline during composition may already resolve objects, narrow possibilities, and reorganize the display.
 4. **Preserve authorship spatially.** User-authored and system-generated information items receive visibly distinct presentations, so their origin is apparent without classifying their content.
@@ -617,7 +617,7 @@ sys:    YOU WILL BE ASKED TO LEAVE
         THIS IS COMPANY POLICY
 ```
 
-**6. Smart house**
+**6. Smart house, 1987 edition**
 ```
 sys:    GOOD EVENING
         THE HOUSE IS AT YOUR SERVICE
@@ -659,13 +659,13 @@ Context does not replace grammar. It supplies information to the active pattern 
 
 The language is terse and does not seek to imitate unrestricted prose. Punctuation has no grammatical role. It remains available inside recognized data formats such as decimal numbers, dates, times, filenames, and other values whose notation requires it. Pattern customization remains deterministic: it changes the definitions by which multilines are understood, not the requirement that USERCOOP know which pattern it applied.
 
-- A multiline that resolves cleanly is accepted.
-- A submitted multiline with no valid reading does not execute and generates a failure event associated with that multiline.
-- A submitted multiline with several valid readings does not execute yet. USERCOOP enters a clarification activity, presents the alternatives in the terms that distinguish them, and accepts a selection or further multiline from the user.
+- When several patterns match, the first one in the explicit precedence order is selected. Lower-precedence matches are not competing grammatical readings.
+- A multiline for which no pattern applies does not execute and generates a failure event associated with that multiline.
+- Once a pattern is selected, its semantic slots may resolve to objects or selections. If a slot requires one object and several satisfy it, USERCOOP enters a clarification activity and presents the candidates in the terms that distinguish them.
 - Fuzzy matching never silently substitutes a plausible interpretation.
 - Every intermediate reduction follows an ordered, inspectable pattern list.
 
-Clarification is a normal continuation of the activity, not an admission that natural-language guessing has taken place. The ambiguity itself is known precisely. If the user abandons clarification, no reading is committed.
+Clarification is therefore about semantic reference or required cardinality, not grammar selection. If the user abandons clarification, no referent is committed.
 
 ### 9.2 Patterns and composition
 
@@ -697,17 +697,19 @@ Worked example:
 usr:    PUT BLOCK TALLER THAN HELD BLOCK INTO BOX
 ```
 
-1. `HELD BLOCK` matches `HELD x` and resolves to one held block, `OBJ1`.
+1. `HELD BLOCK` matches `HELD x` and, in this example, resolves to exactly one held block, `OBJ1`.
 2. `BLOCK TALLER THAN OBJ1` matches `x TALLER THAN y` and resolves to `OBJ2`.
 3. `PUT OBJ2 INTO BOX` matches the outer operation and executes.
 
-### 9.3 Pattern competition and precedence
+### 9.3 Pattern precedence
 
 There is no separate reserved vocabulary or reserved-word namespace. There are patterns. A word may appear as a fixed part of one pattern and as a name or value matched by another.
 
-The active context, semantic types, pattern composition, and explicit pattern precedence determine which readings remain valid. When several valid readings remain after those mechanisms have been applied, USERCOOP exposes the ambiguity for clarification rather than silently assigning the word to one namespace.
+Several patterns may match the same material. This does not create grammatical ambiguity: patterns form a strictly ordered list, and the highest-precedence applicable pattern determines the reading. Changing the order deliberately changes that result.
 
-Creating or changing a pattern may therefore introduce competition with existing patterns. Such competition is inspectable, testable, and resolved through the same explicit precedence order as any other pattern interaction. Retiring a pattern removes that way of reading future multilines but does not delete stored knowledge, whose identities do not depend on the continued existence of the pattern that originally expressed it.
+After a pattern has been selected, one of its semantic slots may still match several objects when the pattern requires one. That is a referent or cardinality question inside a known grammatical reading, not competition between patterns. USERCOOP asks for clarification only at that semantic level.
+
+Creating or changing a pattern may change which pattern takes precedence for some multilines, but the result remains deterministic and testable. Retiring a pattern removes that way of reading future multilines but does not delete stored knowledge, whose identities do not depend on the continued existence of the pattern that originally expressed it.
 
 ## 10. Live composition
 
@@ -734,20 +736,11 @@ The interface always shows what may validly follow from the current parser state
 
 Entering an activity narrows the language. Beginning a multiline, filling an argument, or supplying a line narrows it again. Submitting the current contribution, abandoning composition, and completing or leaving the activity restore the appropriate parent vocabulary.
 
-### 10.3 Case as parser feedback
+### 10.3 Pattern membership as parser feedback
 
-The ordinary appearance of user input is uppercase. In the large majority of composition, letters appear and remain uppercase as the instruction is recognized.
+Tokens that belong to the matched pattern appear in the normal uppercase presentation. Every non-pattern token appears lowercase and in the accent color.
 
-Lowercase is exceptional and carries specific parser feedback:
-
-- A value recognized as a variable appears in lowercase, confirming that it is being interpreted as a variable rather than as command vocabulary.
-- A sequence that no longer matches the language appears in lowercase, signaling a likely typo or other failure of recognition.
-
-The display updates retroactively as understanding changes. The user can therefore see recognition directly in the letters without needing an additional icon, underline, or diagnostic message. Because uppercase is normal, these exceptions remain clear and uncommon.
-
-Case feedback is a channel of the Latin-script presentation, not a universal mechanism. Scripts without case distinction, and scripts whose case mapping is not reversible character by character, cannot carry it. Where case feedback is unavailable, the same two conditions are carried by an equivalent non-case channel, chosen once and used consistently: reduced stroke weight for a recognized variable, and reduced weight plus a subtle horizontal offset for unrecognized text. The semantic meaning is identical; only the visible channel differs.
-
-The first implementation provides a Latin-script command vocabulary. Unicode text, including mixed-script text, is permitted in values and names wherever the active patterns can interpret it deterministically. Additional command-language scripts are added as complete language presentations, with an appropriate parser-feedback channel and tested font coverage; they are not approximated by Latin case rules.
+This distinction applies to values, names, variables, and any other material supplied through pattern slots. The display updates retroactively as pattern matching changes, so the user can see the structure currently recognized by USERCOOP directly in the text without an additional icon, underline, or diagnostic message.
 
 ### 10.4 Provisional cognitive context
 
@@ -797,7 +790,7 @@ Inference results are exempt. They arrive when they arrive, and [section 22.5](#
 
 An information item describes something USERCOOP may need to manage: its meaning, identity, content, relevance, and available actions. A space is the presence USERCOOP gives that item on the screen. The information item is semantic; the space is compositional.
 
-Neither is a window or a card. An information item does not prescribe a rectangle, coordinates, or visual hierarchy. One item may move between spaces or representations as attention changes, and several related items may share a space when USERCOOP judges that they belong together.
+Neither is a window, card, panel, or rectangle. An information item does not prescribe coordinates or visual hierarchy. One item may move between spaces or representations as attention changes, and several related items may share a space when USERCOOP judges that they belong together.
 
 The screen is not divided into applications, windows, or a terminal plus an output area. It is one composed workspace containing spaces. A space gives temporary visual presence to an information item or a related group of them: a multiline being composed, a submitted multiline, a set of valid continuations, a notification, a spatial view, or another part of the current activity. USERCOOP creates, emphasizes, transforms, moves, and releases spaces as it composes the screen around the current activity.
 
@@ -818,7 +811,58 @@ An information item is a contextual representation of knowledge. Its definition 
 
 Facts observed through a device adapter enter the same knowledge model as facts stated by the user or derived by rules. Intrinsic content such as a document or message remains itself; an adapter does not gain control over how USERCOOP arranges or presents the workspace.
 
-### 11.2 Presentation belongs to USERCOOP
+### 11.2 The alignment line
+
+The visual structure of a space is a vertical alignment line. This line is the space's layout identity. A space has no width, center, available extent, or enclosing rectangle.
+
+Each text line is rendered by its own native 2D label and occupies only the width required by its actual text. The labels attach to the vertical alignment line according to the space's left, centered, or right alignment. The widest label does not create a common width for the other labels, and their individual control bounds do not combine into a container.
+
+Those measured label bounds still matter as occupied pixels. USERCOOP uses them for collision avoidance, focus, pointing, and interaction, but never treats their union as the geometry of the space.
+
+The height of the alignment line emerges from the apparent height of the multiline attached to it, with appropriate padding above and below. The line normally remains implicit. When a visible relationship targets the whole space, the alignment line appears as a dim stroke for as long as that relationship is shown.
+
+### 11.3 Placement frames and continuous drift
+
+Every informational space belongs to exactly one of two positioning frames:
+
+- **Wall-fixed.** The alignment line occupies a virtual 3D location on the unbounded activity wall. Camera movement changes its projected screen position as the wall develops.
+- **Camera-fixed.** The alignment line is attached to the camera rig and retains its relationship to the current view while the camera moves.
+
+These frames do not mix within one visible link. A wall-fixed space links only to another wall-fixed space; a camera-fixed space links only to another camera-fixed space.
+
+Spaces do not have permanent positions. Their alignment lines drift dynamically and smoothly as USERCOOP maintains the composition, makes room for relevant information, and preserves the hard constraints on text and links. Repositioning is normal behavior, not an exceptional repair.
+
+### 11.4 Link-lines
+
+A link-line makes a relationship visible only when that relationship is specifically relevant to the user's current cognitive context. USERCOOP does not display the entire semantic graph. Sparing use keeps each visible link meaningful and the composition quiet.
+
+A link is typically a one-pixel gray line made from segments in eight permitted directions: top, top-right, right, bottom-right, bottom, bottom-left, left, and top-left. Its endpoint depends only on what it attaches to:
+
+- A link to one text line ends in a tiny disc at that line.
+- A link to a whole space ends at, and reveals, the space's dim vertical alignment line.
+
+The dot and alignment line identify the scope of the attachment. They do not express causal or semantic direction. The progressive drawing direction normally follows screen chronology, from the oldest visible element toward the newest.
+
+Link placement is not routing between two positions that have already been fixed. USERCOOP usually begins with one visible source and a relationship whose other element is not yet on screen. It chooses a legal development from the source, chooses where the related space can appear, and places that space at the other end. The link and destination placement are one compositional decision.
+
+The destination may also already exist. Spaces can drift to make a legal development possible. A destination's visibility is independent of the link: it may exist before the link becomes relevant, remain after the link retracts, or appear while the link is developing.
+
+Two constraints are absolute:
+
+- Link-lines never cross one another, except at a deliberately shared endpoint.
+- Link-lines are never drawn through text.
+
+USERCOOP tests candidate developments against the actual padded footprints of labels and against visible links. These footprints are obstacles, not containers and not space extents. Because spaces drift, their positions and the link construction are adjusted together rather than accepting an illegal crossing.
+
+### 11.5 Development through time
+
+Link-lines appear progressively from source toward destination. This is the spatial counterpart of letter-by-letter text: USERCOOP visibly develops a relationship instead of dropping a finished graphic onto the screen.
+
+Links also retract progressively. When a link changes destination, it retracts from the old endpoint to the last path shared with the new development, preserves that common path, then grows toward the new endpoint. When no common path exists, it may retract to the source before developing again. A link that is no longer relevant may retract completely without removing either endpoint.
+
+Movement of spaces, progressive link development, and progressive text appearance share one temporal language. Together they convey that USERCOOP is actively composing and cooperating, while their pace remains governed by the presentation settings in sections 14, 17, and 18.
+
+### 11.6 Presentation belongs to USERCOOP
 
 USERCOOP decides:
 
@@ -830,7 +874,7 @@ USERCOOP decides:
 - How it transitions between states.
 - How user preferences influence it.
 
-### 11.3 Multiple representations
+### 11.7 Multiple representations
 
 An information item may support several semantic representations rather than arbitrary continuous resizing:
 
@@ -908,7 +952,6 @@ Font selection must prioritize:
 - Strong uppercase and lowercase forms.
 - Useful punctuation, mathematical symbols, and numerals.
 - Reliable rendering at both very large and very small sizes.
-- Broad language coverage and deliberately chosen offline fallbacks.
 - Stable character and line metrics across the weights USERCOOP uses.
 - Licensing that permits the complete font set to be bundled and used offline.
 
@@ -938,11 +981,11 @@ Letter-by-letter revelation belongs to the presentation of an information item, 
 
 ### 13.4 Text without visible containers
 
-Information spaces do not normally draw rectangular containers around text. Internally, a 2D control still has bounds for layout, projection, focus, and interaction, but those bounds do not need to become a visible card or panel.
+Information spaces do not use rectangular containers around text, visibly or as their layout identity. Each text line is its own native 2D label, sized only to the text it contains. Its bounds support focus, pointing, collision detection, and interaction, but no enclosing control combines the lines into the width of a space.
 
-Text primarily needs an anchor, a vertical alignment line, a readable measure, and a meaningful relationship to nearby information. It may be left-aligned, centered, or right-aligned according to its role in the spatial grammar. Empty space, alignment, typography, and movement establish grouping before borders or backgrounds are considered.
+Text primarily needs a vertical alignment line and a meaningful relationship to nearby information. Individual labels may extend left, right, or equally on both sides of that line according to the space's alignment. Empty space, typography, movement, and the common alignment line establish grouping without a border or background.
 
-Camera distance changes the room available to an information representation, not the basic legibility of its font. When less room is available, the item says less: it moves from detailed to standard to overview representation rather than continuously shrinking its text. The invisible projected rectangle remains useful as layout geometry even when no rectangle is visually drawn.
+Camera distance and surrounding occupancy affect how much information a representation can comfortably show, not the basic legibility of its font. When the composition becomes tighter, the item says less: it moves from detailed to standard to overview representation rather than continuously shrinking its text.
 
 ### 13.5 Writing discipline
 
@@ -1131,19 +1174,21 @@ The 3D environment is conceptual rather than scenic. It does not require a room,
 
 An information item remains distinct from both its 3D layout geometry and its visible 2D representation.
 
-For each visible information space, USERCOOP maintains an invisible, camera-facing rectangle in the 3D layout. Its center and the midpoints of its four edges are projected through the camera into screen coordinates. Their projections determine the center, apparent width, and apparent height of the corresponding 2D control. Camera-space depth determines ordering among projected controls.
+For each wall-fixed information space, USERCOOP maintains an anchor on the virtual 3D wall. Projecting that anchor through the camera determines the screen position of the space's vertical alignment line; camera-space depth contributes to ordering. The independently sized 2D labels are then attached to that projected line. No projected width, center, or available rectangular extent is computed for the space.
+
+Camera-fixed spaces use alignment-line anchors attached to the camera rig rather than to the wall. They follow the same label-based presentation, but their positions remain relative to the current view.
 
 ```text
 information item
         | represented in the spatial model by
-invisible 3D rectangle
+wall-fixed or camera-fixed alignment anchor
         | projected through the camera into
-screen position, apparent size, and depth order
+screen position and depth order
         | used to present
-native 2D control
+independently sized native 2D labels
 ```
 
-The visible control is therefore not a 3D billboard, texture, or subviewport. It remains native 2D interface content with clean typography. The invisible rectangle supplies only spatial placement and scale.
+The visible text is therefore not a 3D billboard, texture, or subviewport. It remains native 2D interface content with clean typography. The 3D anchor supplies spatial placement; actual label footprints and link-lines supply the screen-space constraints described in section 11.
 
 ### 16.3 The developing wall
 
@@ -1314,6 +1359,7 @@ A reduced-motion setting changes presentation without changing semantics:
 | Mechanism | Reduced-motion equivalent |
 |---|---|
 | Letter-by-letter reveal | Text appears complete, with a brief single fade or no transition |
+| Progressive link development or retraction | The complete legal link appears, changes, or disappears with a brief fade or no transition |
 | Camera travel between activity contexts | Cut, with a persistent textual indication of the activity entered or left |
 | Anticipatory gaze and contextual glance | The related context is presented in place, labeled as context |
 | Overview withdrawal | Representation change to overview without camera movement |
@@ -1329,11 +1375,11 @@ The composition is a semantic model before it is a picture, which is the propert
 
 - Every information space exposes its semantic type, identity, content, provenance, and available actions to the platform accessibility layer.
 - Authorship, which is carried spatially for sighted users, is exposed explicitly as a property, so that user-authored and system-generated items remain distinguishable without spatial perception.
-- Parser feedback carried by case or weight is also exposed as a state, so that a recognized variable and an unrecognized sequence are reported as such.
+- Pattern and non-pattern token status is exposed explicitly, so assistive technology does not depend on case or accent color to communicate the distinction.
 - Failure events are announced as events associated with their line, not as silent visual changes.
 - Text is exposed complete from the moment the item exists, never progressively.
 
-Every projected space remains a native 2D `Control` and participates in an explicit logical accessibility order derived from the semantic composition rather than from screen coordinates. Platform accessibility support is an acceptance criterion for each target build. A target is not released until automated tree assertions and assistive-technology tests confirm that spaces, states, authorship, actions, and reading order are exposed correctly.
+Every projected space is rendered through native 2D labels and participates in an explicit logical accessibility order derived from the semantic composition rather than from screen coordinates. Platform accessibility support is an acceptance criterion for each target build. A target is not released until automated tree assertions and assistive-technology tests confirm that spaces, states, authorship, actions, and reading order are exposed correctly.
 
 ### 18.5 Capacity
 
@@ -1525,13 +1571,14 @@ The distinctive claims of this design are testable, and the ones that are not te
 
 | Claim | How it is tested |
 |---|---|
-| Never guess | Property tests over generated multilines: every multiline resolves to one reading, enters clarification with every remaining valid reading exposed, or produces a failure event when no reading exists. No multiline silently commits a second-choice interpretation. |
+| Never guess | Property tests over generated multilines: precedence always selects the highest applicable pattern, no applicable pattern produces a failure event, and non-unique bindings for singular semantic slots enter clarification without silently choosing a referent. |
 | Offline by construction | Build-time static analysis plus the runtime observation test of section 6.3. |
-| Deterministic parsing | Golden tests over multilines and the pattern set under test, including permutations of every set of additional lines, contextual patterns, synonyms where defined, competing patterns and precedence changes, and data-format punctuation. |
+| Deterministic parsing | Golden tests over multilines and the pattern set under test, including permutations of every set of additional lines, contextual patterns, synonyms where defined, overlapping patterns and precedence changes, and data-format punctuation. |
 | Frame rate cannot change results | The same inference run at different operation budgets and frame rates produces identical derivations in the same order. |
 | Response targets | Measured per keystroke on each device class, reported as a distribution rather than an average. |
 | Accessibility defaults | Automated checks confirm that default contrast, text size, and motion alternatives remain within the ranges of section 18, plus accessibility-tree assertions for every space type. |
 | Composition stability | Replay of recorded multiline streams, asserting that background spaces do not oscillate and that minimum display lifetimes hold. |
+| Space and link geometry | Property tests assert that label footprints never overlap link-lines, links never cross, additional labels do not create a space width, and every visible link joins endpoints in the same positioning frame. |
 | Capability enforcement | Every capability class has a test that an ungranted action fails, is reported, and does not partially execute. |
 
 ### 22.8 Initial implementation direction
@@ -1541,11 +1588,11 @@ The first working path is deliberately narrow:
 1. Establish the root services and the 2D and 3D rendering layers.
 2. Render the current typed-multiline information item with the intended typography and submission behavior.
 3. Build and run steps 1 and 2 on one Android phone before the stack is entrenched.
-4. Add deterministic token recognition and the case or weight feedback channel.
+4. Add deterministic token recognition and the uppercase versus lowercase accent-color feedback channel.
 5. Introduce minimal knowledge identities, facts, and events.
 6. Represent the current session and one developing activity.
 7. Advance a small inference process incrementally and show its genuine trace.
-8. Project an invisible 3D information rectangle into a native 2D control.
+8. Project a wall-fixed alignment anchor into independently sized native 2D labels, then add one progressively drawn legal link-line.
 9. Put the offline enforcement test and the accessibility-default checks into the build, before there is much to fix.
 10. Add one bounded local device domain, such as files, after the semantic path works end to end.
 
